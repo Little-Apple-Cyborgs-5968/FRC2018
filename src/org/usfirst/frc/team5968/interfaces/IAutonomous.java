@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5968.interfaces;
 
-import org.usfirst.frc.team5968.robot.Automode;
+import org.usfirst.frc.team5968.robot.AutoMode;
 import org.usfirst.frc.team5968.robot.AutoProgress;
 import org.usfirst.frc.team5968.robot.StartingPoint;
 
@@ -38,13 +38,14 @@ public interface IAutonomous {
 	
 	/*
 	 * Decides auto mode based on FMS game data, and makes the auto
-	 * mode decision based on the flowchart above.
+	 * mode decision based on the flowchart above. The backup mode
+	 * is executed if both the switch and scale are on the same side
 	 */
-	public Automode autoModeControl(String gameData, StartingPoint startingPoint);
+	public AutoMode autoModeControl(String gameData, StartingPoint startingPoint, AutoMode backup);
 	
 	/*
 	 * Execute autonomous choice returned from autoModeControl
 	 */
-	public void doAuto(StartingPoint startingPoint, Automode automode, Alliance alliance);
+	public void doAuto(StartingPoint startingPoint, AutoMode automode, Alliance alliance);
 	
 }

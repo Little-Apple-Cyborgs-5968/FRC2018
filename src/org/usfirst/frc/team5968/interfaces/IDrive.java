@@ -1,10 +1,6 @@
 package org.usfirst.frc.team5968.interfaces;
 
 public interface IDrive {
-	/*
-	 * Initializes motors and encoders
-	 */
-	public void init();
 	
 	public void driveStraight(double initialSpeed);
 	
