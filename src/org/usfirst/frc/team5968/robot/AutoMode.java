@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5968.robot;
 
 /*
- * Stores autonomous modes
+ * Possible autonomous modes
  */
 public enum AutoMode {
 
