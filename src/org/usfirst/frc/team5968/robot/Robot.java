@@ -12,6 +12,10 @@ public class Robot extends RobotBase {
 	private IRobotMode autonomousMode;
 	private IRobotMode teleoperatedMode;
 	
+	private IDrive drive;
+	private IGrabber grabber;
+	private ILift lift;
+	
 	public Robot() {
 		
 	}
@@ -19,13 +23,28 @@ public class Robot extends RobotBase {
 	@Override
 	public void startCompetition() {
     	HAL.observeUserProgramStarting();
+    	LiveWindow.setEnabled(isTest());
+    	
+    	IRobotMode currentMode = null;
+    	IRobotMode desiredMode = null;
     	
     	while(true) {
+    		desiredMode = getDesiredMode();
     		
+    		if (desiredMode != currentMode) {
+    			desiredMode.init();
+    			currentMode = desiredMode;
+    		}
     		
+    		currentMode.periodic();
+    		doPeripheralPeriodicProcessing();
     		SmartDashboard.updateValues();
             LiveWindow.updateValues();
     	}
+	}
+	
+	private void doPeripheralPeriodicProcessing() {
+		
 	}
 	
 	private IRobotMode getDesiredMode() {
@@ -42,7 +61,7 @@ public class Robot extends RobotBase {
             HAL.observeUserProgramTest();
             return teleoperatedMode;
         } else {
-            throw new IllegalStateException("Robot is in an invalid mode.");
+            throw new IllegalStateException("Robot is in an invalid mode");
         }
 	}
 	
