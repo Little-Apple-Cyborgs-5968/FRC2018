@@ -2,18 +2,18 @@ package org.usfirst.frc.team5968.robot;
 
 public class TeleoperatedMode implements IRobotMode {
 
-	public TeleoperatedMode() {
-		
-	}
-	
-	@Override
-	public void init() {
-		
-	}
+    public TeleoperatedMode() {
 
-	@Override
-	public void periodic() {
-		
-	}
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void periodic() {
+
+    }
 
 }
