@@ -37,8 +37,8 @@ public class Robot extends RobotBase {
             desiredMode = getDesiredMode();
         
             if (desiredMode != currentMode) {
-        	desiredMode.init();
-        	currentMode = desiredMode;
+            	desiredMode.init();
+            	currentMode = desiredMode;
             }
         
             currentMode.periodic();
