@@ -1,9 +1,10 @@
 package org.usfirst.frc.team5968.robot;
 
-public class AutonomousMode implements IRobotMode {
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-    public AutonomousMode() {
-        
+public class AutonomousMode implements IRobotMode {
+	
+    public AutonomousMode(){
     }
 
     @Override

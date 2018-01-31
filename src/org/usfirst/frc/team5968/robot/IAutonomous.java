@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5968.robot;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 public interface IAutonomous {
     /*
      * Outline for autonomous options: 
@@ -20,7 +22,10 @@ public interface IAutonomous {
      */
 
     /*
-     * Execute autonomous choice returned from autoModeControl
+     * Chooses the auto mode to execute.
+     * Goes into specific mode class.
+     * Sets states.
      */
     public void doAuto(StartingPoint startingPoint);
+    
 }
