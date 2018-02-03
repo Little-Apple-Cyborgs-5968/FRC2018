@@ -1,11 +1,14 @@
 package org.usfirst.frc.team5968.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.function.Consumer;
 
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Drive implements IDrive {
@@ -50,6 +53,34 @@ public class Drive implements IDrive {
         // Resets encoders
         leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
         rightMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
+        // Inverts encoder output
+        leftMotorControllerLead.setSensorPhase(true);
+        // Set relevant frame periods to be at least as fast as periodic rate
+        leftMotorControllerLead.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT);
+        leftMotorControllerLead.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT);
+        // Set peak and nominal outputs
+        leftMotorControllerLead.configNominalOutputForward(0, TIMEOUT);
+        leftMotorControllerLead.configNominalOutputReverse(0, TIMEOUT);
+        leftMotorControllerLead.configPeakOutputForward(1, TIMEOUT);
+        leftMotorControllerLead.configPeakOutputReverse(-1, TIMEOUT);
+        rightMotorControllerLead.configNominalOutputForward(0, TIMEOUT);
+        rightMotorControllerLead.configNominalOutputReverse(0, TIMEOUT);
+        rightMotorControllerLead.configPeakOutputForward(1, TIMEOUT);
+        rightMotorControllerLead.configPeakOutputReverse(-1, TIMEOUT);
+        // Set PIDF values
+        leftMotorControllerLead.selectProfileSlot(0, PIDIDX);
+        leftMotorControllerLead.config_kF(0, 0.0, TIMEOUT);
+        leftMotorControllerLead.config_kP(0, 0.2, TIMEOUT);
+        leftMotorControllerLead.config_kI(0, 0.0, TIMEOUT); 
+        leftMotorControllerLead.config_kD(0, 0.0, TIMEOUT);
+        rightMotorControllerLead.selectProfileSlot(0, 0);
+        rightMotorControllerLead.config_kF(0, 0.0, TIMEOUT);
+        rightMotorControllerLead.config_kP(0, 0.2, TIMEOUT);
+        rightMotorControllerLead.config_kI(0, 0.0, TIMEOUT); 
+        rightMotorControllerLead.config_kD(0, 0.0, TIMEOUT);
+        
+        leftMotorControllerLead.configMotionCruiseVelocity(15000, TIMEOUT);
+        leftMotorControllerLead.configMotionAcceleration(6000, TIMEOUT);
         
         leftMotorSpeed = 0;
         rightMotorSpeed = 0;
@@ -85,15 +116,22 @@ public class Drive implements IDrive {
     @Override
     public void driveManual(double leftSpeed, double rightSpeed) {
         driveMode = DriveMode.IdleOrManual;
-        leftMotorSpeed = (leftSpeed + 1.0) / 2.0;
-        rightMotorSpeed = (rightSpeed + 1.0) / 2.0;
+        leftMotorSpeed = leftSpeed * 512 * 500 / 600;
+        rightMotorSpeed = rightSpeed * 512 * 500 / 600;
     }
 
     @Override
     public void periodic() {
         if (getCurrentDriveMode() == DriveMode.IdleOrManual) {
-            leftMotorControllerLead.set(controlMode, leftMotorSpeed);
-            rightMotorControllerLead.set(controlMode, rightMotorSpeed);
+            leftMotorControllerLead.set(ControlMode.Velocity, leftMotorSpeed);
+            rightMotorControllerLead.set(ControlMode.Velocity, rightMotorSpeed);
+            
+            SmartDashboard.putNumber("Left Error", leftMotorControllerLead.getClosedLoopError(PIDIDX));
+            SmartDashboard.putNumber("Right Error", rightMotorControllerLead.getClosedLoopError(PIDIDX));
+            SmartDashboard.putNumber("Left Target Velocity", leftMotorSpeed);
+            SmartDashboard.putNumber("Right Target Velocity", rightMotorSpeed);
+            SmartDashboard.putNumber("Left Encoder Velocity", leftMotorControllerLead.getSelectedSensorVelocity(0));
+            SmartDashboard.putNumber("Right Encoder Velocity", rightMotorControllerLead.getSelectedSensorVelocity(0));
         }
         else if (getCurrentDriveMode() == DriveMode.DrivingStraight) {
             
