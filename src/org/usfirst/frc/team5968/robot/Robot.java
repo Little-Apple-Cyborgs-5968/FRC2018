@@ -17,12 +17,12 @@ public class Robot extends RobotBase {
     
     public Robot() {
         drive = new Drive();
-        grabber = new Grabber();
-        lift = new Lift();
+        // grabber = new Grabber();
+        // lift = new Lift();
         
-        disabledMode = new disabledMode();
-        autonomousMode = new autonomousMode(drive, grabber, lift);
-        teleoperatedMode = new teleoperatedMode(drive, grabber, lift);
+        disabledMode = new DisabledMode();
+        autonomousMode = new AutonomousMode(drive);
+        teleoperatedMode = new TeleoperatedMode(drive);
     }
     
     @Override
@@ -40,7 +40,6 @@ public class Robot extends RobotBase {
             	desiredMode.init();
             	currentMode = desiredMode;
             }
-        
             currentMode.periodic();
             doPeripheralPeriodicProcessing();
             SmartDashboard.updateValues();

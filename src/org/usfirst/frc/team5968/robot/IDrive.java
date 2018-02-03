@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 public interface IDrive {
 
     public DriveMode getCurrentDriveMode();
-
+    
     /*
      * Drive straight forward a specified distance at a specified speed
      */
@@ -28,9 +28,12 @@ public interface IDrive {
      */
     public void driveManual(double leftSpeed, double rightSpeed);
 
+    public void init();
+    
     /*
      * Called periodically to actually execute the driving and rotating set by
      * the driveDistance() and rotateDegrees() methods
      */
     public void periodic();
+
 }

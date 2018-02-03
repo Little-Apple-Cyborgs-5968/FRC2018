@@ -2,7 +2,7 @@ package org.usfirst.frc.team5968.robot;
 
 public class AutonomousMode implements IRobotMode {
 
-    public AutonomousMode() {
+    public AutonomousMode(IDrive drive) {
         
     }
 
