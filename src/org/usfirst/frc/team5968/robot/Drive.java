@@ -26,6 +26,8 @@ public class Drive implements IDrive {
     
     private ControlMode controlMode;
     
+    private DriveMode driveMode;
+    
     public Drive() {
         rightMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_FOLLOWER));
         rightMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_LEAD));
@@ -43,6 +45,8 @@ public class Drive implements IDrive {
     }
 
     public void init() {
+        
+        driveMode = DriveMode.IdleOrManual;
         // Resets encoders
         leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
         rightMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
@@ -53,36 +57,34 @@ public class Drive implements IDrive {
     
     @Override
     public DriveMode getCurrentDriveMode() {
-        // TODO Auto-generated method stub
-        return null;
+        return driveMode;
     }
 
     @Override
     public void driveDistance(double distance, double speed) {
-        // TODO Auto-generated method stub
+        driveMode = DriveMode.DrivingStraight;
         
     }
 
     @Override
     public void rotateDegrees(double angle, double speed) {
-        // TODO Auto-generated method stub
+        driveMode = DriveMode.Rotating;
         
     }
 
     @Override
     public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
-        // TODO Auto-generated method stub
-        
+        driveMode = DriveMode.DrivingStraight;
     }
 
     @Override
     public void rotateDegrees(double relativeAngle, Consumer<IDrive> completionRoutine) {
-        // TODO Auto-generated method stub
-        
+        driveMode = DriveMode.Rotating;
     }
 
     @Override
     public void driveManual(double leftSpeed, double rightSpeed) {
+        driveMode = DriveMode.IdleOrManual;
         leftMotorSpeed = (leftSpeed + 1.0) / 2.0;
         rightMotorSpeed = (rightSpeed + 1.0) / 2.0;
     }
