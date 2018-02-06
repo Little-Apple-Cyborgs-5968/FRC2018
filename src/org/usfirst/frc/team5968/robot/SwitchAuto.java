@@ -7,16 +7,34 @@ public class SwitchAuto implements IRobotMode {
 	StartingPoint startingPoint;
 	Alliance alliance;
 
-    public doSwitch(StartingPoint s, Alliance a) {
+    public SwitchAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
         alliance = a;
     }
     
     /*
-	 * Execute the movements for auto mode: SWITCH only
+	 * Execute the movements for auto mode: SWITCH only from the left side
 	 */
-	public void autoSwitch() {
+	public void switchFromLeft() {
 		
+	}
+	
+	/*
+	 * Execute the movements for auto mode: SWITCH only from the left side
+	 */
+	public void switchFromRight() {
+		
+	}
+	
+	/*
+	 * Chooses which side movements to execute.
+	 */
+	public void doSwitchMovements() {
+		if (startingPoint==LEFT) {
+			switchFromLeft();
+		} else if (startingPoint==RIGHT) {
+			switchFromRight();
+		}
 	}
 
 }

@@ -7,13 +7,13 @@ public class BaselineAuto implements IRobotMode {
 	StartingPoint startingPoint;
 	Alliance alliance;
 
-    public doBaseline(StartingPoint s, Alliance a) {
+    public BaselineAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
         alliance = a;
     }
     
     /*
-	 * Execute the movements for auto mode: SCALE only
+	 * Execute the movements for auto mode: BASELINE only
 	 */
 	public void autoBaseline() {
 		
