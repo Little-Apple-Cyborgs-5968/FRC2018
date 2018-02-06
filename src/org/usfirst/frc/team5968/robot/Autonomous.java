@@ -12,8 +12,8 @@ public class Autonomous implements IAutonomous{
      */
 	private String pollGameData() {
 		String gameData;
-		boolean status = DriverStation.getInstance().isDisabled();
-		while(status==true) {			//poll for data while disabled
+		boolean isRobotDisabled = DriverStation.getInstance().isDisabled();
+		while(isRobotDisabled) {			//poll for data while disabled
 			gameData = DriverStation.getInstance().getGameSpecificMessage();
 		}
 		gameData = DriverStation.getInstance().getGameSpecificMessage();  //possibly unnecessary: poll for data immediately once enabled
@@ -61,26 +61,28 @@ public class Autonomous implements IAutonomous{
      */
 	public void doAuto(StartingPoint startingPoint) {
 		AutoMode automode = autoModeControl(startingPoint);
+		Alliance alliance = DriverStation.getInstance().getAlliance();
 		switch(automode) {
 		case SWITCH:
-			doSwitch md = new doSwitch(startingPoint, DriverStation.getInstance().getAlliance());
+			SwitchAuto switchAutoMode = new SwitchAuto(startingPoint, alliance);
 			//need to do stuff here REGARDING SETTING STATES
 			break;
 		case SCALE:
-			doScale md = new doScale(startingPoint, DriverStation.getInstance().getAlliance());
+			ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
 			break;
 		case BOTH:
-			AutoMode a2 = chooseModeforBoth();
-			if (a2==SWITCH) {
-				doSwitch md = new doSwitch(startingPoint, DriverStation.getInstance().getAlliance());
-			} else if (a2==SCALE) {
-				doScale md = new doScale(startingPoint, DriverStation.getInstance().getAlliance());
+			AutoMode modeIfBothOnOurSide = chooseModeforBoth();
+			if (modeIfBothOnOurSide==SWITCH) {
+				SwitchAuto switchAutoMode = new SwitchAuto(startingPoint, alliance);
+			} else if (modeIfBothOnOurSide==SCALE) {
+				ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
 			} else {
-				doBaseline md = new doBaseline(startingPoint, DriverStation.getInstance().getAlliance());
+				BaselineAuto baselineAutoMode = new BaselineAuto(startingPoint, alliance);
 			}
 			break;
 		default:
-			doBaseline md = new doBaseline(startingPoint, DriverStation.getInstance().getAlliance());
+			BaselineAuto baselineAutoMode = new BaselineAuto(startingPoint, alliance);
+			break;
 		}
 	}
 }
