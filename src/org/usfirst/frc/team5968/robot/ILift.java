@@ -2,7 +2,6 @@ package org.usfirst.frc.team5968.robot;
 
 public interface ILift {
     
-    public void goTo (LiftHeight desiredHeight);
    
     /*
      * The following three methods call liftDistance to raise/lower to the

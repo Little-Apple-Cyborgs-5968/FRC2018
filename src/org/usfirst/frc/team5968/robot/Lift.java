@@ -27,7 +27,7 @@ public class Lift implements ILift{
         liftMotor = new TalonSRX(7);
     }
     
-    public void goTo (LiftHeight desiredHt) {
+    private void goTo (LiftHeight desiredHt) {
         desiredHeight = desiredHt;
     }
     
