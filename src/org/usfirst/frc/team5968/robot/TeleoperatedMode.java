@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class TeleoperatedMode implements IRobotMode {
     
     // private Lift lift;
-    // private Grabber grabber;
+    private IGrabber grabber;
     private IDrive drive;
     private Joystick leftJoystick;
     private Joystick rightJoystick;
@@ -19,7 +19,7 @@ public class TeleoperatedMode implements IRobotMode {
         rightJoystick = new Joystick(PortMap.portOf(USB.RIGHT));
         
         // lift = new Lift();
-        // grabber = new Grabber();
+        grabber = new Grabber();
         this.drive = drive;
     }
 
@@ -32,6 +32,9 @@ public class TeleoperatedMode implements IRobotMode {
     @Override
     public void periodic() {
         drive.driveManual(getLeftStick(), getRightStick());
+        if (getButtonPressed(1)){
+            grabber.toggleGrabbing();
+        }
     }
     
     private double getLeftStick() {
@@ -45,4 +48,16 @@ public class TeleoperatedMode implements IRobotMode {
         return (Math.abs(rightY) < TOLERANCE) ? 0 : rightY;
         
     }
+    private boolean getButtonPressed(int buttonNumber ){
+        switch (buttonNumber){
+        case 1: 
+            return leftJoystick.getRawButton(buttonNumber);
+           
+        default: 
+            return false;
+                
+        }
+    }
+
+    
 }

@@ -4,11 +4,11 @@ public interface IGrabber {
     /*
      * Returns state of the piston (in -> true, out -> false)
      */
-    public boolean isGrabbing();
+    
 
-    public void grab();
+   
 
-    public void release();
+   
 
     public void toggleGrabbing();
     
