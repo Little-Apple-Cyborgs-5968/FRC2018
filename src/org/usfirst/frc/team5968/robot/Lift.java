@@ -2,6 +2,8 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import org.usfirst.frc.team5968.robot.PortMap.CAN;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -24,7 +26,8 @@ public class Lift implements ILift{
     double motorSpeed;
     
     public Lift() {
-        liftMotor = new TalonSRX(7);
+        liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
+        motorSpeed = 0.2;
     }
     
     private void goTo (LiftHeight desiredHt) {
