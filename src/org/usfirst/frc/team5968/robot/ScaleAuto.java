@@ -6,35 +6,62 @@ public class ScaleAuto implements IRobotMode {
 	
 	StartingPoint startingPoint;
 	Alliance alliance;
+    IDrive drive; 
 
     public ScaleAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
         alliance = a;
+        //put the first step here
+        drive = new Drive();
+        goStraightLong();
     }
     
     /*
-	 * Execute the movements for auto mode: SCALE only from the left side
-	 */
-	public void scaleFromLeft() {
-		
+	 * FIRST STEP: go straight 324 inches
+	 */	
+	public void goStraightLong() {
+		drive.driveDistance(324.0, 0.4, drive -> liftGrabber());
 	}
 	
 	/*
-	 * Execute the movements for auto mode: SCALE only from the right side
-	 */
-	public void scaleFromRight() {
-		
-	}
-	
-	/*
-	 * Chooses which side movements to execute.
-	 */
-	public void doScaleMovements() {
+	 * SECOND STEP: lift the grabber to the highest preset
+	 */	
+	public void liftGrabber() {
 		if (startingPoint==LEFT) {
-			scaleFromLeft();
+			drive.goToScaleHeight(drive -> turnRight());
 		} else if (startingPoint==RIGHT) {
-			scaleFromRight();
+			drive.goToScaleHeight(drive -> turnLeft());
 		}
 	}
+	
+	/*
+	 * THIRD STEP A: turn right towards scale
+	 */	
+	public void turnRight() {
+		//drive.rotateDegrees(90.0, drive -> goStraightShort(drive));
+		drive.rotateDegrees(90.0, drive -> openGrabber());
+	}
+	
+	/*
+	 * THIRD STEP B: turn left towards scale
+	 */	
+	public void turnLeft() {
+		//drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
+		drive.rotateDegrees(-90.0, drive -> openGrabber());
+	}
 
+	/*
+	 * FOURTH STEP: go straight a small amount of inches 
+	 * PROBABLY UNNECESSARY AS OF NOW
+	public void goStraightShort(IDrive drive) {
+		drive.driveDistance(0.5, 30.0, drive -> openGrabber(drive));
+	}
+	*/	
+	
+	/*
+	 * FIFTH STEP: open the grabber
+	 */	
+	public void openGrabber() {
+		drive.release();
+	}
 }

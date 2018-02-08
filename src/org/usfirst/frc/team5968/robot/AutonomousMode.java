@@ -15,7 +15,7 @@ public class AutonomousMode implements IRobotMode {
 
     @Override
     public void periodic() {
-
+    	//velocity control goes here (PID stuff)
     }
 
 }

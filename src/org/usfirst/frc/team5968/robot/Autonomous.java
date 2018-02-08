@@ -65,7 +65,6 @@ public class Autonomous implements IAutonomous{
 		switch(automode) {
 		case SWITCH:
 			SwitchAuto switchAutoMode = new SwitchAuto(startingPoint, alliance);
-			//need to do stuff here REGARDING SETTING STATES
 			break;
 		case SCALE:
 			ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
