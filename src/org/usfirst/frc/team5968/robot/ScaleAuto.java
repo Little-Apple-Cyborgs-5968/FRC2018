@@ -16,6 +16,7 @@ public class ScaleAuto implements IRobotMode {
         //put the first step here
         drive = new Drive();
         grabber = new Grabber();
+        grabber.grab();
         lift = new Lift();
         goStraightLong();
     }
