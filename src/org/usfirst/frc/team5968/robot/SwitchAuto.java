@@ -7,12 +7,14 @@ public class SwitchAuto implements IRobotMode {
 	StartingPoint startingPoint;
 	Alliance alliance;
 	IDrive drive;
+	IGrabber grabber;
 
     public SwitchAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
         alliance = a;
         //put the first step here
         drive = new Drive();
+        grabber = new Grabber();
         goStraightLong();
     }
     
@@ -59,7 +61,7 @@ public class SwitchAuto implements IRobotMode {
 	 * FIFTH STEP: open the grabber
 	 */	
 	public void openGrabber() {
-		drive.release();
+		grabber.release();
 	}
 
 }
