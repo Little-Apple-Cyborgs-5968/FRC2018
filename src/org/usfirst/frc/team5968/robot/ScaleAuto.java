@@ -8,6 +8,7 @@ public class ScaleAuto implements IRobotMode {
 	Alliance alliance;
     IDrive drive; 
     IGrabber grabber;
+    ILift lift;
 
     public ScaleAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
@@ -15,6 +16,7 @@ public class ScaleAuto implements IRobotMode {
         //put the first step here
         drive = new Drive();
         grabber = new Grabber();
+        lift = new Lift();
         goStraightLong();
     }
     
@@ -22,7 +24,7 @@ public class ScaleAuto implements IRobotMode {
 	 * FIRST STEP: go straight 324 inches
 	 */	
 	public void goStraightLong() {
-		drive.driveDistance(324.0, 0.4, drive -> liftGrabber());
+		drive.driveDistance(324.0, 0.4, lift -> liftGrabber());
 	}
 	
 	/*
@@ -30,9 +32,9 @@ public class ScaleAuto implements IRobotMode {
 	 */	
 	public void liftGrabber() {
 		if (startingPoint==LEFT) {
-			drive.goToScaleHeight(drive -> turnRight());
+			lift.goToScaleHeight(drive -> turnRight());
 		} else if (startingPoint==RIGHT) {
-			drive.goToScaleHeight(drive -> turnLeft());
+			lift.goToScaleHeight(drive -> turnLeft());
 		}
 	}
 	
@@ -49,7 +51,7 @@ public class ScaleAuto implements IRobotMode {
 	 */	
 	public void turnLeft() {
 		//drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(-90.0, drive -> openGrabber());
+		drive.rotateDegrees(-90.0, grabber -> openGrabber());
 	}
 
 	/*

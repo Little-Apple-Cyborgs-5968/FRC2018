@@ -8,6 +8,7 @@ public class SwitchAuto implements IRobotMode {
 	Alliance alliance;
 	IDrive drive;
 	IGrabber grabber;
+	ILift lift;
 
     public SwitchAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
@@ -15,6 +16,7 @@ public class SwitchAuto implements IRobotMode {
         //put the first step here
         drive = new Drive();
         grabber = new Grabber();
+        lift = new Lift();
         goStraightLong();
     }
     
@@ -22,7 +24,7 @@ public class SwitchAuto implements IRobotMode {
 	 * FIRST STEP: go straight 168 inches
 	 */	
 	public void goStraightLong() {
-		drive.driveDistance(168.0, 0.4, drive -> liftGrabber());
+		drive.driveDistance(168.0, 0.4, lift -> liftGrabber());
 	}
 	
 	/*
@@ -30,9 +32,9 @@ public class SwitchAuto implements IRobotMode {
 	 */	
 	public void liftGrabber() {
 		if (startingPoint==LEFT) {
-			drive.goToSwitchHeight(drive -> turnRight());
+			lift.goToSwitchHeight(drive -> turnRight());
 		} else if (startingPoint==RIGHT) {
-			drive.goToSwitchHeight(drive -> turnLeft());
+			lift.goToSwitchHeight(drive -> turnLeft());
 		}
 	}
 	
@@ -54,7 +56,7 @@ public class SwitchAuto implements IRobotMode {
 	 * FOURTH STEP: go straight 13 inches 
 	 */	
 	public void goStraightShort() {
-		drive.driveDistance(13.0, 0.4, drive -> openGrabber());
+		drive.driveDistance(13.0, 0.4, grabber -> openGrabber());
 	}
 	
 	/*
