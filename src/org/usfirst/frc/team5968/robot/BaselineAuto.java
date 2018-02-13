@@ -22,4 +22,14 @@ public class BaselineAuto implements IRobotMode {
 		drive.driveDistance(168.0, 0.4);
 	}
 
+    @Override
+    public void init() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void periodic() {
+        // TODO Auto-generated method stub
+    }
+
 }

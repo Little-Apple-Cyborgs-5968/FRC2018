@@ -67,4 +67,16 @@ public class SwitchAuto implements IRobotMode {
 		grabber.release();
 	}
 
+    @Override
+    public void init() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void periodic() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

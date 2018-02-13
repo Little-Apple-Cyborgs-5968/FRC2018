@@ -24,6 +24,9 @@ public class Drive implements IDrive {
     private final int TIMEOUT = 0;
     private final int SENSORPOSITION = 0;
     
+    private double distanceInches;
+    private double targetRotations;
+    
     private ControlMode controlMode;
     
     private DriveMode driveMode;
@@ -45,8 +48,9 @@ public class Drive implements IDrive {
     }
 
     public void init() {
-        
-        driveMode = DriveMode.IdleOrManual;
+        distanceInches = 0;
+        targetRotations = 0;
+        driveMode = DriveMode.IDLEORMANUAL;
         // Resets encoders
         leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
         rightMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
@@ -55,6 +59,40 @@ public class Drive implements IDrive {
         rightMotorSpeed = 0;
     }
     
+
+    public void initAutoPID() {
+        leftMotorControllerLead.setSelectedSensorPosition(0, 0, 0);
+        rightMotorControllerLead.setSelectedSensorPosition(0, 0, 0);
+        
+
+        /* set the peak, nominal outputs, and deadband */
+        leftMotorControllerLead.configNominalOutputForward(0, 0);
+        leftMotorControllerLead.configNominalOutputReverse(0, 0);
+        leftMotorControllerLead.configPeakOutputForward(.5, 0);
+        leftMotorControllerLead.configPeakOutputReverse(-.5, 0);
+       
+        /* set closed loop gains in slot0 */
+        leftMotorControllerLead.config_kF(0, 0, 0);
+        leftMotorControllerLead.config_kP(0, 0.58, 0);
+        leftMotorControllerLead.config_kI(0, 0, 0);
+        leftMotorControllerLead.config_kD(0, 0.08, 0);
+        leftMotorControllerLead.config_IntegralZone(0, 100, 0);
+        
+        /* set the peak, nominal outputs, and deadband */
+        rightMotorControllerLead.configNominalOutputForward(0, 0);
+        rightMotorControllerLead.configNominalOutputReverse(0, 0);
+        rightMotorControllerLead.configPeakOutputForward(.5, 0);
+        rightMotorControllerLead.configPeakOutputReverse(-.5, 0);
+        rightMotorControllerLead.config_IntegralZone(0, 100, 0);
+       
+        /* set closed loop gains in slot0 */
+        rightMotorControllerLead.config_kF(0, 0, 0);
+        rightMotorControllerLead.config_kP(0, 0.56, 0);
+        rightMotorControllerLead.config_kI(0, 0, 0);
+        rightMotorControllerLead.config_kD(0, 0.51, 0);
+    }
+    
+    
     @Override
     public DriveMode getCurrentDriveMode() {
         return driveMode;
@@ -62,43 +100,52 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distance, double speed) {
-        driveMode = DriveMode.DrivingStraight;
+        driveMode = DriveMode.DRIVINGSTRAIGHT;
         
     }
 
     @Override
     public void rotateDegrees(double angle, double speed) {
-        driveMode = DriveMode.Rotating;
+        driveMode = DriveMode.ROTATING;
         
     }
 
     @Override
     public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
-        driveMode = DriveMode.DrivingStraight;
+        driveMode = DriveMode.DRIVINGSTRAIGHT;
+        driveStraight(ControlMode.Position);
+        distanceInches = this.distanceInches;
+
+        targetRotations = (distanceInches / (Math.PI * 6.0)) * 2048;
     }
 
     @Override
     public void rotateDegrees(double relativeAngle, Consumer<IDrive> completionRoutine) {
-        driveMode = DriveMode.Rotating;
+        driveMode = DriveMode.ROTATING;
     }
 
     @Override
     public void driveManual(double leftSpeed, double rightSpeed) {
-        driveMode = DriveMode.IdleOrManual;
-        leftMotorSpeed = (leftSpeed + 1.0) / 2.0;
-        rightMotorSpeed = (rightSpeed + 1.0) / 2.0;
+        driveMode = DriveMode.IDLEORMANUAL;
+        leftMotorSpeed = leftSpeed;
+        rightMotorSpeed = -rightSpeed;
+    }
+
+    private void driveStraight(ControlMode controlMode) {
+        controlMode = ControlMode.Position;
     }
 
     @Override
     public void periodic() {
-        if (getCurrentDriveMode() == DriveMode.IdleOrManual) {
+        if (getCurrentDriveMode() == DriveMode.IDLEORMANUAL) {
             leftMotorControllerLead.set(controlMode, leftMotorSpeed);
             rightMotorControllerLead.set(controlMode, rightMotorSpeed);
         }
-        else if (getCurrentDriveMode() == DriveMode.DrivingStraight) {
-            
+        else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
+            leftMotorControllerLead.set(controlMode, -targetRotations);
+            rightMotorControllerLead.set(controlMode, targetRotations);
         }
-        else if (getCurrentDriveMode() == DriveMode.Rotating) {
+        else if (getCurrentDriveMode() == DriveMode.ROTATING) {
             
         }
     }
