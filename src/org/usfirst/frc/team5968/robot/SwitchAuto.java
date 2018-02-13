@@ -32,9 +32,9 @@ public class SwitchAuto implements IRobotMode {
 	 * SECOND STEP: lift the grabber to the highest preset
 	 */	
 	public void liftGrabber() {
-		if (startingPoint==LEFT) {
+		if (startingPoint==StartingPoint.LEFT) {
 			lift.goToSwitchHeight(drive -> turnRight());
-		} else if (startingPoint==RIGHT) {
+		} else if (startingPoint==StartingPoint.RIGHT) {
 			lift.goToSwitchHeight(drive -> turnLeft());
 		}
 	}

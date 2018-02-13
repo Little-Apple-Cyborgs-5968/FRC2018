@@ -13,12 +13,12 @@ public class Grabber implements IGrabber{
         pistonState = PistonState.OPEN;
     }
     
-    private void grab() {      
+    public void grab() {      
         pistonState = PistonState.OPEN;
         
     }
 
-    private void release() {
+    public void release() {
         pistonState = PistonState.CLOSED;
         
     }

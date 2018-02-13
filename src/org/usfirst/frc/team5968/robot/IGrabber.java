@@ -16,5 +16,8 @@ public interface IGrabber {
      * Called periodically to execute the actions stated above
      */
     public void periodic();
+    
+    public void grab();
+    public void release();
 
 }

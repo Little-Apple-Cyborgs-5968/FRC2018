@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5968.robot;
 
+import java.util.function.Consumer;
+
 public interface ILift {
     
    
@@ -23,4 +25,8 @@ public interface ILift {
      * Called periodically to execute the actions set by the above methods
      */
     public void periodic();
+
+    public void goToSwitchHeight(Consumer<IDrive> completionRoutine);
+    public void goToScaleHeight(Consumer<IDrive> completionRoutine);
+    public void goToGroundHeight(Consumer<IDrive> completionRoutine);
 }

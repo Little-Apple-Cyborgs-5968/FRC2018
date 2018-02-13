@@ -19,9 +19,6 @@ public class AutonomousMode implements IRobotMode {
 
     @Override
     public void periodic() {
-        double distanceInInches = 48.0;
-        double targetRotations = (distanceInInches / (Math.PI * 6.0)) * 2048;
-        drive.driveDistance(targetRotations, 0.2);
     }
 
 }
