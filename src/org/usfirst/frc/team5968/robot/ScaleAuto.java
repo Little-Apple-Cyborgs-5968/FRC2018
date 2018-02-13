@@ -32,9 +32,9 @@ public class ScaleAuto implements IRobotMode {
 	 * SECOND STEP: lift the grabber to the highest preset
 	 */	
 	public void liftGrabber() {
-		if (startingPoint==LEFT) {
+		if (startingPoint==StartingPoint.LEFT) {
 			lift.goToScaleHeight(drive -> turnRight());
-		} else if (startingPoint==RIGHT) {
+		} else if (startingPoint==StartingPoint.RIGHT) {
 			lift.goToScaleHeight(drive -> turnLeft());
 		}
 	}
@@ -69,4 +69,16 @@ public class ScaleAuto implements IRobotMode {
 	public void openGrabber() {
 		grabber.release();
 	}
+
+    @Override
+    public void init() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void periodic() {
+        // TODO Auto-generated method stub
+        
+    }
 }

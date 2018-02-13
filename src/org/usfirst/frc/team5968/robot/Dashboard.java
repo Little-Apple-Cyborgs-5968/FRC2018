@@ -1,14 +1,21 @@
+package org.usfirst.frc.team5968.robot;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Dashboard implements IDashboard{
-	//probably using SmartDashboard for now
+    
+    public Dashboard() {
+        // Add SmartDashboard SendableChooser options
+    }
+    
 	public AutoMode chooseModeforBOTH() {
 		if (//GET DASHBOARD CHOICE ==AutoMode.SWITCH) {
-			return SWITCH;
+			return AutoMode.SWITCH;
 		} else if (//GET DASHBOARD CHOICE ==AutoMode.SCALE) {
-			return SCALE;
+			return AutoMode.SCALE;
 		} else {
-			return LINE;
+			return AutoMode.LINE;
 		}
 	}
 }
