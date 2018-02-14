@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class BaselineAuto {
 	
-	StartingPoint startingPoint;
-	Alliance alliance;
-	IDrive drive;
+	private StartingPoint startingPoint;
+	private Alliance alliance;
+	private IDrive drive;
+	private double driveSpeed = 0.2;
 
-    public BaselineAuto(StartingPoint s, Alliance a) {
-        startingPoint = s;
-        alliance = a;
+    public BaselineAuto(StartingPoint startingPoint, Alliance alliance) {
+        startingPoint = this.startingPoint;
+        alliance = this.alliance;
         drive = new Drive();
         goStraight();
     }
@@ -19,7 +20,7 @@ public class BaselineAuto {
 	 * FIRST STEP: go straight 168 inches
 	 */	
 	public void goStraight() {
-		drive.driveDistance(168.0, 0.4);
+		drive.driveDistance(168.0, driveSpeed);
 	}
-
+	
 }

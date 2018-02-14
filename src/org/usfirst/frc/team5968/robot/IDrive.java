@@ -27,6 +27,11 @@ public interface IDrive {
      * This is the method used to drive manually during teleoperated mode
      */
     public void driveManual(double leftSpeed, double rightSpeed);
+    
+    /*
+     * Sets PID gain values, peak output, nominal output
+     */
+    public void initAutoPID();
 
     public void init();
     

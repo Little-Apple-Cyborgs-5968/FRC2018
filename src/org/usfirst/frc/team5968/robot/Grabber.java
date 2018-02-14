@@ -2,46 +2,44 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-public class Grabber implements IGrabber{
+public class Grabber implements IGrabber {
 
     private DoubleSolenoid piston;
     private PistonState pistonState; 
     
     
     public Grabber (){
-        DoubleSolenoid piston = new DoubleSolenoid(0,0); //add ports later
+        piston = new DoubleSolenoid(0,0); // add ports later
         pistonState = PistonState.OPEN;
     }
     
+    @Override
     public void grab() {      
         pistonState = PistonState.OPEN;
-        
     }
 
+    @Override
     public void release() {
         pistonState = PistonState.CLOSED;
-        
     }
 
     @Override
     public void toggleGrabbing() {
-        if (pistonState == PistonState.OPEN){
+        if (pistonState == PistonState.OPEN) {
             release();
-        }else{
+        } else {
             grab();
         }
-        
     }
     
     
     @Override
     public void periodic() {
-        if (pistonState == PistonState.OPEN){
+        if (pistonState == PistonState.OPEN) {
             piston.set(DoubleSolenoid.Value.kReverse);
-        }else{
+        } else{
             piston.set(DoubleSolenoid.Value.kForward);
         }
-        
     }
-
+    
 }

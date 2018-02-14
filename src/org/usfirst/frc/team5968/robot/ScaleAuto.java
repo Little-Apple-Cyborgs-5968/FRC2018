@@ -1,21 +1,16 @@
 package org.usfirst.frc.team5968.robot;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 public class ScaleAuto {
 	
 	private StartingPoint startingPoint;
-	private Alliance alliance;
     private IDrive drive; 
     private IGrabber grabber;
     private ILift lift;
-    private final double rotationSpeed = 0.2;
-    private final double driveSpeed = 0.2;
+    private double rotationSpeed = 0.2;
+    private double driveSpeed = 0.2;
 
-    public ScaleAuto(StartingPoint s, Alliance a) {
+    public ScaleAuto(StartingPoint s) {
         startingPoint = s;
-        alliance = a;
-        //put the first step here
         drive = new Drive();
         grabber = new Grabber();
         grabber.grab();
@@ -34,7 +29,7 @@ public class ScaleAuto {
 	 * SECOND STEP: lift the grabber to the highest preset
 	 */	
 	public void liftGrabber() {
-		if (startingPoint==StartingPoint.LEFT) {
+		if (startingPoint == StartingPoint.LEFT) {
 			lift.goToScaleHeight(drive -> turnRight());
 		} else if (startingPoint==StartingPoint.RIGHT) {
 			lift.goToScaleHeight(drive -> turnLeft());
@@ -71,4 +66,5 @@ public class ScaleAuto {
 	public void openGrabber() {
 		grabber.release();
 	}
+	
 }

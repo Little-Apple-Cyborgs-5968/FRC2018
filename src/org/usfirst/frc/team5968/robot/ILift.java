@@ -4,17 +4,17 @@ import java.util.function.Consumer;
 
 public interface ILift {
     
-   
     /*
      * The following three methods call liftDistance to raise/lower to the
      * correct value
      */
     public void goToGroundHeight();
-    
     public void goToSwitchHeight();
-
     public void goToScaleHeight();
-
+    public void goToSwitchHeight(Consumer<IDrive> completionRoutine);
+    public void goToScaleHeight(Consumer<IDrive> completionRoutine);
+    public void goToGroundHeight(Consumer<IDrive> completionRoutine);
+    
     /*
      * Moves the scissor lift to the correct height
      */
@@ -25,8 +25,5 @@ public interface ILift {
      * Called periodically to execute the actions set by the above methods
      */
     public void periodic();
-
-    public void goToSwitchHeight(Consumer<IDrive> completionRoutine);
-    public void goToScaleHeight(Consumer<IDrive> completionRoutine);
-    public void goToGroundHeight(Consumer<IDrive> completionRoutine);
+    
 }

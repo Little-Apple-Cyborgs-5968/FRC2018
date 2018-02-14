@@ -59,7 +59,8 @@ public class Drive implements IDrive {
         targetRotations = 0;
         angleToRotate = 0;
         driveMode = DriveMode.IDLEORMANUAL;
-        // Resets encoders
+        
+        // Reset encoders
         leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
         rightMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
         
@@ -157,34 +158,36 @@ public class Drive implements IDrive {
     private double getYaw() {
         return navX.getYaw();
     }
+    
+    private void setMotors(int leftMotorDirection, int rightMotorDirection, DriveMode driveMode) {
+        if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
+            leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
+            leftMotorControllerLead.set(controlMode, targetRotations * rightMotorDirection);
+        } else {
+            leftMotorControllerLead.set(controlMode, leftMotorSpeed * leftMotorDirection);
+            leftMotorControllerLead.set(controlMode, rightMotorSpeed * rightMotorDirection);
+        }
+    }
 
     @Override
     public void periodic() {
         if (getCurrentDriveMode() == DriveMode.IDLEORMANUAL) {
-            leftMotorControllerLead.set(controlMode, leftMotorSpeed);
-            rightMotorControllerLead.set(controlMode, rightMotorSpeed);
-        }
-        else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
+            setMotors(1, 1, DriveMode.IDLEORMANUAL);
+        } else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
             resetYaw();
-            leftMotorControllerLead.set(controlMode, -targetRotations);
-            rightMotorControllerLead.set(controlMode, targetRotations);
+            setMotors(-1, 1, DriveMode.DRIVINGSTRAIGHT);
         }
         else if (getCurrentDriveMode() == DriveMode.ROTATING) {
             if (Math.abs(getYaw() - angleToRotate) > ROTATION_TOLERANCE) {
                 if ((getYaw() - angleToRotate) < 0) {
-                    leftMotorControllerLead.set(controlMode, leftMotorSpeed);
-                    rightMotorControllerLead.set(controlMode, -rightMotorSpeed);
+                    setMotors(1, -1, DriveMode.ROTATING);
+                } else if ((getYaw() - angleToRotate) > 0) {
+                    setMotors(-1, 1, DriveMode.ROTATING);
                 }
-                else if ((getYaw() - angleToRotate) > 0) {
-                    leftMotorControllerLead.set(controlMode, -leftMotorSpeed);
-                    rightMotorControllerLead.set(controlMode, rightMotorSpeed);
-                }
-            }
-            else {
-                leftMotorControllerLead.set(controlMode, 0);
-                rightMotorControllerLead.set(controlMode, 0);
+            } else {
+                setMotors(0, 0, DriveMode.IDLEORMANUAL);
             }
         }
     }
-
+    
 }

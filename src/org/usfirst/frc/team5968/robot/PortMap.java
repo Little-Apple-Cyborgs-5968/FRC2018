@@ -39,9 +39,9 @@ public class PortMap {
             return 5;
         case LIFT_MOTOR_CONTROLLER: 
             return 1;
-            
         default:
             return -1;
         }
     }
+    
 }

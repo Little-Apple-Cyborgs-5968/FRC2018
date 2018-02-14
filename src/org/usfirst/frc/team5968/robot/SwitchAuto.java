@@ -1,21 +1,16 @@
 package org.usfirst.frc.team5968.robot;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 public class SwitchAuto {
 	
 	private StartingPoint startingPoint;
-	private Alliance alliance;
 	private IDrive drive;
 	private IGrabber grabber;
 	private ILift lift;
 	private final double rotationSpeed = 0.2;
 	private final double driveSpeed = 0.2;
 
-    public SwitchAuto(StartingPoint s, Alliance a) {
-        startingPoint = s;
-        alliance = a;
-        //put the first step here
+    public SwitchAuto(StartingPoint startingPoint) {
+        startingPoint = this.startingPoint;
         drive = new Drive();
         grabber = new Grabber();
         grabber.grab();

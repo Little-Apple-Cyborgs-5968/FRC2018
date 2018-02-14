@@ -4,32 +4,31 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Autonomous implements IAutonomous {
-    Dashboard dashboard;
+    
+    private Dashboard dashboard;
     
 	 /*
-     * Should be called in a fast loop (~20ms) while disabled to get data about 
-     * switch/scale sides. Returns a string of length 3 detailing
-     * the alliance sides, starting from the closest (own) switch.
+     * Returns a string of length 3 detailing the alliance sides, 
+     * starting from the closest (own) switch.
      * Ex. "LRL" "RRL" "RRR"
      */
 	private String pollGameData() {
 		String gameData;
 		boolean isRobotDisabled = DriverStation.getInstance().isDisabled();
-		while(isRobotDisabled) {			//poll for data while disabled
+		while (isRobotDisabled) {
 			gameData = DriverStation.getInstance().getGameSpecificMessage();
 		}
-		gameData = DriverStation.getInstance().getGameSpecificMessage();  //possibly unnecessary: poll for data immediately once enabled
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
 		return gameData;
 	}
 
 	/*
-     * Decides auto mode based on FMS game data, and makes the auto
-     * mode decision based on the flowchart above.
+     * Returns autonomous mode, given polled game data and robot starting point
      */
 	private AutoMode autoModeControl(StartingPoint startingPoint) {
 		String gameData = pollGameData();
 		char robotPosition = 'N';
-		switch(startingPoint) {
+		switch (startingPoint) {
 		case RIGHT:
 			robotPosition = 'R';
 			break;
@@ -43,13 +42,13 @@ public class Autonomous implements IAutonomous {
 			break;
 		}
 		
-		if (robotPosition==gameData.charAt(0)) {
-			if (robotPosition==gameData.charAt(1)) {
+		if (robotPosition == gameData.charAt(0)) {
+			if (robotPosition == gameData.charAt(1)) {
 				return AutoMode.BOTH;
 			} else {
 				return AutoMode.SWITCH;
 			}
-		} else if (robotPosition==gameData.charAt(1)) {
+		} else if (robotPosition == gameData.charAt(1)) {
 			return AutoMode.SCALE;
 		} else {
 			return AutoMode.LINE;
@@ -57,9 +56,7 @@ public class Autonomous implements IAutonomous {
 	}
 	
 	 /*
-     * Chooses the auto mode to execute.
-     * Goes into specific mode class.
-     * Sets states.
+     * Creates instance of correct autonomous mode
      */
 	public void doAuto(StartingPoint startingPoint) {
 	    dashboard = new Dashboard();
@@ -67,24 +64,25 @@ public class Autonomous implements IAutonomous {
 		Alliance alliance = DriverStation.getInstance().getAlliance();
 		switch(automode) {
 		case SWITCH:
-			SwitchAuto switchAutoMode = new SwitchAuto(startingPoint, alliance);
+			new SwitchAuto(startingPoint);
 			break;
 		case SCALE:
-			ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
+			new ScaleAuto(startingPoint);
 			break;
 		case BOTH:
 			AutoMode modeIfBothOnOurSide = dashboard.chooseModeforBoth();
-			if (modeIfBothOnOurSide==AutoMode.SWITCH) {
-				SwitchAuto switchAutoModeBoth = new SwitchAuto(startingPoint, alliance);
-			} else if (modeIfBothOnOurSide==AutoMode.SCALE) {
-				ScaleAuto scaleAutoModeBoth = new ScaleAuto(startingPoint, alliance);
+			if (modeIfBothOnOurSide == AutoMode.SWITCH) {
+				new SwitchAuto(startingPoint);
+			} else if (modeIfBothOnOurSide == AutoMode.SCALE) {
+				new ScaleAuto(startingPoint);
 			} else {
-				BaselineAuto baselineAutoMode = new BaselineAuto(startingPoint, alliance);
+				new BaselineAuto(startingPoint, alliance);
 			}
 			break;
 		default:
-			BaselineAuto baselineAutoMode = new BaselineAuto(startingPoint, alliance);
+			new BaselineAuto(startingPoint, alliance);
 			break;
 		}
 	}
+	
 }

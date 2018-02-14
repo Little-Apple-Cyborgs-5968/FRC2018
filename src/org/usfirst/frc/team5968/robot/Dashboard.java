@@ -2,7 +2,7 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
-public class Dashboard implements IDashboard{
+public class Dashboard implements IDashboard {
     
     private SendableChooser<AutoMode> autoChoices;
     
@@ -16,4 +16,5 @@ public class Dashboard implements IDashboard{
 	public AutoMode chooseModeforBoth() {	    
 		return autoChoices.getSelected();
 	}
+	
 }

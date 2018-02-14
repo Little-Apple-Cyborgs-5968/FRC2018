@@ -9,7 +9,7 @@ import org.usfirst.frc.team5968.robot.PortMap.CAN;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class Lift implements ILift{
+public class Lift implements ILift {
 
     private LiftHeight desiredHeight;
     private LiftHeight currentHeight;
@@ -126,6 +126,7 @@ public class Lift implements ILift{
         completionRoutine.accept(drive);
         
     }
+    
 }
         
  

@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5968.robot;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 public interface IAutonomous {
     /*
      * Outline for autonomous options: 
@@ -17,15 +15,14 @@ public interface IAutonomous {
      *- If neither are on the same side of the robot 
      *      - Baseline 
      *
-     *Center starting position: 
-     *- Baseline
+     * Center starting position: 
+     * - Baseline
      */
 
+
     /*
-     * Chooses the auto mode to execute.
-     * Goes into specific mode class.
-     * Sets states.
-     */
+    * Creates instance of correct autonomous mode
+    */
     public void doAuto(StartingPoint startingPoint);
     
 }

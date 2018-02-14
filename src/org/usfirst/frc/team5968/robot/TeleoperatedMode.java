@@ -46,51 +46,25 @@ public class TeleoperatedMode implements IRobotMode {
         
         if (getButtonPressed(4) || getButtonPressed(7)){
             lift.goToScaleHeight();
-        }
-        
+        } 
     }
     
     private double getLeftStick() {
         double leftY = leftJoystick.getY();
         return (Math.abs(leftY) < TOLERANCE) ? 0 : leftY;
-        
     }
     
     private double getRightStick() {
         double rightY = rightJoystick.getY();
         return (Math.abs(rightY) < TOLERANCE) ? 0 : rightY;
-        
     }
-    private boolean getButtonPressed(int buttonNumber ){
-        switch (buttonNumber){
-       
-        case 1: 
-            return leftJoystick.getRawButton(1);
-            
-        case 2: 
-            return leftJoystick.getRawButton(2);
-            
-        case 3: 
-            return leftJoystick.getRawButton(3);
-            
-        case 4: 
-            return leftJoystick.getRawButton(4);
-           
-        case 5: 
-            return rightJoystick.getRawButton(5);
-           
-        case 6: 
-            return rightJoystick.getRawButton(6);
-            
-        case 7: 
-            return rightJoystick.getRawButton(7);
-            
-        default: 
-            
-            return false;
-                
+    
+    private boolean getButtonPressed(int buttonNumber) {
+        if (buttonNumber <= 4) {
+            return leftJoystick.getRawButton(buttonNumber);
+        } else {
+            return rightJoystick.getRawButton(buttonNumber);
         }
     }
-
     
 }
