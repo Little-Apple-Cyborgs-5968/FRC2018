@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 
 public class Drive implements IDrive {
     
-    private AHRS navX;
+    private NavXMXP navX;
     private TalonSRX leftMotorControllerLead;
     private TalonSRX rightMotorControllerFollow;
     
@@ -38,7 +38,7 @@ public class Drive implements IDrive {
     private final double ROTATION_TOLERANCE = 5;
     
     public Drive() {
-        navX = new AHRS(SerialPort.Port.kMXP);
+        navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
         rightMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_FOLLOWER));
         rightMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_LEAD));
         leftMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_FOLLOWER));
@@ -66,7 +66,7 @@ public class Drive implements IDrive {
         
         leftMotorSpeed = 0;
         rightMotorSpeed = 0;
-        resetYaw();
+        navX.resetYaw();
     }
     
 
@@ -120,7 +120,7 @@ public class Drive implements IDrive {
     @Override
     public void rotateDegrees(double angle, double speed) {
         controlMode = ControlMode.PercentOutput;
-        resetYaw();
+        navX.resetYaw();
         driveMode = DriveMode.ROTATING;
         leftMotorSpeed = 0.2;
         rightMotorSpeed = -0.2;
@@ -151,14 +151,6 @@ public class Drive implements IDrive {
         controlMode = ControlMode.Position;
     }
     
-    private void resetYaw() {
-        navX.reset();
-    }
-    
-    private double getYaw() {
-        return navX.getYaw();
-    }
-    
     private void setMotors(int leftMotorDirection, int rightMotorDirection, DriveMode driveMode) {
         if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
             leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
@@ -174,14 +166,14 @@ public class Drive implements IDrive {
         if (getCurrentDriveMode() == DriveMode.IDLEORMANUAL) {
             setMotors(1, 1, DriveMode.IDLEORMANUAL);
         } else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
-            resetYaw();
+            navX.resetYaw();
             setMotors(-1, 1, DriveMode.DRIVINGSTRAIGHT);
         }
         else if (getCurrentDriveMode() == DriveMode.ROTATING) {
-            if (Math.abs(getYaw() - angleToRotate) > ROTATION_TOLERANCE) {
-                if ((getYaw() - angleToRotate) < 0) {
+            if (Math.abs(navX.getYaw() - angleToRotate) > ROTATION_TOLERANCE) {
+                if ((navX.getYaw() - angleToRotate) < 0) {
                     setMotors(1, -1, DriveMode.ROTATING);
-                } else if ((getYaw() - angleToRotate) > 0) {
+                } else if ((navX.getYaw() - angleToRotate) > 0) {
                     setMotors(-1, 1, DriveMode.ROTATING);
                 }
             } else {
