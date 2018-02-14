@@ -17,8 +17,8 @@ public class Robot extends RobotBase {
     
     public Robot() {
         drive = new Drive();
-        // grabber = new Grabber();
-        // lift = new Lift();
+        grabber = new Grabber();
+        lift = new Lift(drive);
         
         disabledMode = new DisabledMode();
         autonomousMode = new AutonomousMode(drive);

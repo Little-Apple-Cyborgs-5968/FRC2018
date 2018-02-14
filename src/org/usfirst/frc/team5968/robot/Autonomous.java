@@ -3,7 +3,9 @@ package org.usfirst.frc.team5968.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class Autonomous implements IAutonomous{
+public class Autonomous implements IAutonomous {
+    Dashboard dashboard;
+    
 	 /*
      * Should be called in a fast loop (~20ms) while disabled to get data about 
      * switch/scale sides. Returns a string of length 3 detailing
@@ -60,6 +62,7 @@ public class Autonomous implements IAutonomous{
      * Sets states.
      */
 	public void doAuto(StartingPoint startingPoint) {
+	    dashboard = new Dashboard();
 		AutoMode automode = autoModeControl(startingPoint);
 		Alliance alliance = DriverStation.getInstance().getAlliance();
 		switch(automode) {
@@ -70,11 +73,11 @@ public class Autonomous implements IAutonomous{
 			ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
 			break;
 		case BOTH:
-			AutoMode modeIfBothOnOurSide = chooseModeforBoth();
-			if (modeIfBothOnOurSide==SWITCH) {
-				SwitchAuto switchAutoMode = new SwitchAuto(startingPoint, alliance);
-			} else if (modeIfBothOnOurSide==SCALE) {
-				ScaleAuto scaleAutoMode = new ScaleAuto(startingPoint, alliance);
+			AutoMode modeIfBothOnOurSide = dashboard.chooseModeforBoth();
+			if (modeIfBothOnOurSide==AutoMode.SWITCH) {
+				SwitchAuto switchAutoModeBoth = new SwitchAuto(startingPoint, alliance);
+			} else if (modeIfBothOnOurSide==AutoMode.SCALE) {
+				ScaleAuto scaleAutoModeBoth = new ScaleAuto(startingPoint, alliance);
 			} else {
 				BaselineAuto baselineAutoMode = new BaselineAuto(startingPoint, alliance);
 			}

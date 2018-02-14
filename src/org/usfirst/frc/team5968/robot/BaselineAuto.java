@@ -2,7 +2,7 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class BaselineAuto implements IRobotMode {
+public class BaselineAuto {
 	
 	StartingPoint startingPoint;
 	Alliance alliance;
@@ -21,15 +21,5 @@ public class BaselineAuto implements IRobotMode {
 	public void goStraight() {
 		drive.driveDistance(168.0, 0.4);
 	}
-
-    @Override
-    public void init() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void periodic() {
-        // TODO Auto-generated method stub
-    }
 
 }

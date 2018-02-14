@@ -2,13 +2,15 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class ScaleAuto implements IRobotMode {
+public class ScaleAuto {
 	
-	StartingPoint startingPoint;
-	Alliance alliance;
-    IDrive drive; 
-    IGrabber grabber;
-    ILift lift;
+	private StartingPoint startingPoint;
+	private Alliance alliance;
+    private IDrive drive; 
+    private IGrabber grabber;
+    private ILift lift;
+    private final double rotationSpeed = 0.2;
+    private final double driveSpeed = 0.2;
 
     public ScaleAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
@@ -17,7 +19,7 @@ public class ScaleAuto implements IRobotMode {
         drive = new Drive();
         grabber = new Grabber();
         grabber.grab();
-        lift = new Lift();
+        lift = new Lift(drive);
         goStraightLong();
     }
     
@@ -44,7 +46,7 @@ public class ScaleAuto implements IRobotMode {
 	 */	
 	public void turnRight() {
 		//drive.rotateDegrees(90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(90.0, drive -> openGrabber());
+		drive.rotateDegrees(90.0, rotationSpeed, drive -> openGrabber());
 	}
 	
 	/*
@@ -52,7 +54,7 @@ public class ScaleAuto implements IRobotMode {
 	 */	
 	public void turnLeft() {
 		//drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(-90.0, grabber -> openGrabber());
+		drive.rotateDegrees(-90.0, rotationSpeed, grabber -> openGrabber());
 	}
 
 	/*
@@ -69,16 +71,4 @@ public class ScaleAuto implements IRobotMode {
 	public void openGrabber() {
 		grabber.release();
 	}
-
-    @Override
-    public void init() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void periodic() {
-        // TODO Auto-generated method stub
-        
-    }
 }

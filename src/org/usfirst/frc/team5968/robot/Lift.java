@@ -2,6 +2,8 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import java.util.function.Consumer;
+
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -10,24 +12,23 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Lift implements ILift{
 
     private LiftHeight desiredHeight;
-    
     private LiftHeight currentHeight;
     
-    DigitalInput groundLimit;
+    private DigitalInput groundLimit;
+    private DigitalInput switchLimit;
+    private DigitalInput scaleLimit;
+    private DigitalInput topLimit;
     
-    DigitalInput switchLimit;
+    private TalonSRX liftMotor;
     
-    DigitalInput scaleLimit;
+    private double motorSpeed;
     
-    DigitalInput topLimit;
+    private Drive drive;
     
-    TalonSRX liftMotor;
-    
-    double motorSpeed;
-    
-    public Lift() {
+    public Lift(IDrive drive) {
         liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
         motorSpeed = 0.2;
+        drive = this.drive;
     }
     
     private void goTo (LiftHeight desiredHt) {
@@ -104,6 +105,26 @@ public class Lift implements ILift{
             }
             
         }
+    }
+
+    @Override
+    public void goToSwitchHeight(Consumer<IDrive> completionRoutine) {
+        goToSwitchHeight();
+        completionRoutine.accept(drive);
+    }
+
+    @Override
+    public void goToScaleHeight(Consumer<IDrive> completionRoutine) {
+        goToScaleHeight();
+        completionRoutine.accept(drive);
+        
+    }
+
+    @Override
+    public void goToGroundHeight(Consumer<IDrive> completionRoutine) {
+        goToGroundHeight();
+        completionRoutine.accept(drive);
+        
     }
 }
         

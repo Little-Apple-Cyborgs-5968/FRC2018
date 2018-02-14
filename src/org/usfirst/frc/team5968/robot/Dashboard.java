@@ -1,21 +1,19 @@
 package org.usfirst.frc.team5968.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class Dashboard implements IDashboard{
     
+    private SendableChooser<AutoMode> autoChoices;
+    
     public Dashboard() {
-        // Add SmartDashboard SendableChooser options
+        autoChoices = new SendableChooser<>();
+        autoChoices.addDefault("Baseline Mode", AutoMode.LINE);
+        autoChoices.addObject("Switch Mode", AutoMode.SWITCH);
+        autoChoices.addObject("Scale Mode", AutoMode.SCALE);
     }
     
-	public AutoMode chooseModeforBOTH() {
-		if (//GET DASHBOARD CHOICE ==AutoMode.SWITCH) {
-			return AutoMode.SWITCH;
-		} else if (//GET DASHBOARD CHOICE ==AutoMode.SCALE) {
-			return AutoMode.SCALE;
-		} else {
-			return AutoMode.LINE;
-		}
+	public AutoMode chooseModeforBoth() {	    
+		return autoChoices.getSelected();
 	}
 }

@@ -18,7 +18,7 @@ public class TeleoperatedMode implements IRobotMode {
         leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
         rightJoystick = new Joystick(PortMap.portOf(USB.RIGHT));
         
-        lift = new Lift();
+        lift = new Lift(drive);
         grabber = new Grabber();
         this.drive = drive;
     }

@@ -2,13 +2,15 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class SwitchAuto implements IRobotMode {
+public class SwitchAuto {
 	
-	StartingPoint startingPoint;
-	Alliance alliance;
-	IDrive drive;
-	IGrabber grabber;
-	ILift lift;
+	private StartingPoint startingPoint;
+	private Alliance alliance;
+	private IDrive drive;
+	private IGrabber grabber;
+	private ILift lift;
+	private final double rotationSpeed = 0.2;
+	private final double driveSpeed = 0.2;
 
     public SwitchAuto(StartingPoint s, Alliance a) {
         startingPoint = s;
@@ -17,7 +19,7 @@ public class SwitchAuto implements IRobotMode {
         drive = new Drive();
         grabber = new Grabber();
         grabber.grab();
-        lift = new Lift();
+        lift = new Lift(drive);
         goStraightLong();
     }
     
@@ -43,21 +45,21 @@ public class SwitchAuto implements IRobotMode {
 	 * THIRD STEP A: turn right towards scale
 	 */	
 	public void turnRight() {
-		drive.rotateDegrees(90.0, drive -> goStraightShort());
+		drive.rotateDegrees(90.0, rotationSpeed, drive -> goStraightShort());
 	}
 	
 	/*
 	 * THIRD STEP B: turn left towards scale
 	 */	
 	public void turnLeft() {
-		drive.rotateDegrees(-90.0, drive -> goStraightShort());
+		drive.rotateDegrees(-90.0, rotationSpeed, drive -> goStraightShort());
 	}
 	
 	/*
 	 * FOURTH STEP: go straight 13 inches 
 	 */	
 	public void goStraightShort() {
-		drive.driveDistance(13.0, 0.4, grabber -> openGrabber());
+		drive.driveDistance(13.0, driveSpeed, grabber -> openGrabber());
 	}
 	
 	/*
@@ -66,17 +68,5 @@ public class SwitchAuto implements IRobotMode {
 	public void openGrabber() {
 		grabber.release();
 	}
-
-    @Override
-    public void init() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void periodic() {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

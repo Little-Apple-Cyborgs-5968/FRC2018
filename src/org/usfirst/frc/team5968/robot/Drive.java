@@ -108,34 +108,35 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distance, double speed) {
+    public void driveDistance(double distanceInches, double speed) {
         driveMode = DriveMode.DRIVINGSTRAIGHT;
+        driveStraight(ControlMode.Position);
+        distanceInches = this.distanceInches;
+        targetRotations = (distanceInches / (Math.PI * 6.0)) * 2048;
         
     }
 
     @Override
     public void rotateDegrees(double angle, double speed) {
-        driveMode = DriveMode.ROTATING;
-        
-    }
-
-    @Override
-    public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
-        driveMode = DriveMode.DRIVINGSTRAIGHT;
-        driveStraight(ControlMode.Position);
-        distanceInches = this.distanceInches;
-
-        targetRotations = (distanceInches / (Math.PI * 6.0)) * 2048;
-    }
-
-    @Override
-    public void rotateDegrees(double relativeAngle, Consumer<IDrive> completionRoutine) {
         controlMode = ControlMode.PercentOutput;
         resetYaw();
         driveMode = DriveMode.ROTATING;
         leftMotorSpeed = 0.2;
         rightMotorSpeed = -0.2;
-        angleToRotate = relativeAngle;
+        angleToRotate = angle;
+        
+    }
+
+    @Override
+    public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
+        driveDistance(distanceInches, speed);
+        completionRoutine.accept(this);
+    }
+
+    @Override
+    public void rotateDegrees(double relativeAngle, double speed, Consumer<IDrive> completionRoutine) {
+        rotateDegrees(relativeAngle, speed);
+        completionRoutine.accept(this);
     }
 
     @Override

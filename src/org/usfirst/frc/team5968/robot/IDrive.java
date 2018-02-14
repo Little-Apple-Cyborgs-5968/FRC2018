@@ -21,7 +21,7 @@ public interface IDrive {
      */
     public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine);
 
-    public void rotateDegrees(double relativeAngle, Consumer<IDrive> completionRoutine);
+    public void rotateDegrees(double relativeAngle, double speed, Consumer<IDrive> completionRoutine);
 
     /*
      * This is the method used to drive manually during teleoperated mode
