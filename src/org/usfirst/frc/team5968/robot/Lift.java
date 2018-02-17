@@ -21,7 +21,7 @@ public class Lift implements ILift {
     
     private TalonSRX liftMotor;
     
-    private double motorSpeed;
+    private static double motorSpeed;
     
     private Drive drive;
     
@@ -78,6 +78,13 @@ public class Lift implements ILift {
         }
     }
     
+    public static boolean moving() {
+        if (motorSpeed > 0) {
+            return true; 
+        } else {
+            return false;
+        }
+    }
     public void periodic() {
         
         if (desiredHeight == LiftHeight.SCALE) {
