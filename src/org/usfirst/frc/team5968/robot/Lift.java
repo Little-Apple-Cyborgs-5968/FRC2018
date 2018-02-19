@@ -2,13 +2,17 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+<<<<<<< HEAD
 import java.util.function.Consumer;
 
+=======
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+<<<<<<< HEAD
 public class Lift implements ILift {
 
     private LiftHeight desiredHeight;
@@ -21,7 +25,7 @@ public class Lift implements ILift {
     
     private TalonSRX liftMotor;
     
-    private double motorSpeed;
+    private static double motorSpeed;
     
     private Drive drive;
     
@@ -29,6 +33,29 @@ public class Lift implements ILift {
         liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
         motorSpeed = 0.2;
         drive = this.drive;
+=======
+public class Lift implements ILift{
+
+    private LiftHeight desiredHeight;
+    
+    private LiftHeight currentHeight;
+    
+    DigitalInput groundLimit;
+    
+    DigitalInput switchLimit;
+    
+    DigitalInput scaleLimit;
+    
+    DigitalInput topLimit;
+    
+    TalonSRX liftMotor;
+    
+    double motorSpeed;
+    
+    public Lift() {
+        liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
+        motorSpeed = 0.2;
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
     }
     
     private void goTo (LiftHeight desiredHt) {
@@ -78,6 +105,16 @@ public class Lift implements ILift {
         }
     }
     
+<<<<<<< HEAD
+    public static boolean moving() {
+        if (motorSpeed > 0) {
+            return true; 
+        } else {
+            return false;
+        }
+    }
+=======
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
     public void periodic() {
         
         if (desiredHeight == LiftHeight.SCALE) {
@@ -106,6 +143,7 @@ public class Lift implements ILift {
             
         }
     }
+<<<<<<< HEAD
 
     @Override
     public void goToSwitchHeight(Consumer<IDrive> completionRoutine) {
@@ -127,6 +165,8 @@ public class Lift implements ILift {
         
     }
     
+=======
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
 }
         
  
