@@ -26,8 +26,12 @@ public class Lift implements ILift {
     private Drive drive;
     
     public Lift(IDrive drive) {
+        switchLimit = new DigitalInput(1);
+        scaleLimit = new DigitalInput(2);
+        groundLimit = new DigitalInput(0);
+        System.out.println("New Lift");
         liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
-        motorSpeed = 0.2;
+        motorSpeed = 0.9;
         drive = this.drive;
     }
     
@@ -78,13 +82,18 @@ public class Lift implements ILift {
         }
     }
     
+    int i = 0;
     public void periodic() {
-        
+        if (i % 5000 == 0) {
+
+            System.out.println(currentHeight);
+            //System.out.println();
+        }
         if (desiredHeight == LiftHeight.SCALE) {
-            if (currentHeight == LiftHeight.GROUND || currentHeight ==  LiftHeight.SWITCH) {
+            if (currentHeight == LiftHeight.GROUND || currentHeight == LiftHeight.SWITCH) {
                 liftMotor.set(ControlMode.PercentOutput,motorSpeed);
             } else if (currentHeight == LiftHeight.TOP) {
-                liftMotor.set(ControlMode.PercentOutput, -motorSpeed);
+                liftMotor.set(ControlMode.PercentOutput, -motorSpeed/9.0);
             }
         }
         
@@ -92,7 +101,7 @@ public class Lift implements ILift {
             if (currentHeight == LiftHeight.GROUND || currentHeight == LiftHeight.SCALE) {
                 liftMotor.set(ControlMode.PercentOutput, motorSpeed);
             } else if (currentHeight == LiftHeight.TOP) {
-                liftMotor.set(ControlMode.PercentOutput, -motorSpeed);
+                liftMotor.set(ControlMode.PercentOutput, -motorSpeed/9.0);
             }
         
     }
@@ -101,9 +110,24 @@ public class Lift implements ILift {
             if (currentHeight == LiftHeight.SCALE ||currentHeight == LiftHeight.SWITCH) {
                 liftMotor.set(ControlMode.PercentOutput, motorSpeed);
             } else if (currentHeight == LiftHeight.TOP) {
-                liftMotor.set(ControlMode.PercentOutput, -motorSpeed);
+                liftMotor.set(ControlMode.PercentOutput, -motorSpeed/9.0);
             }
             
+        }
+        i++;
+        
+        setCurrentHeight();
+    }
+    
+    private void setCurrentHeight() {
+        if (groundLimit.get()) {
+            currentHeight = LiftHeight.GROUND;
+        } else if (switchLimit.get()) {
+            currentHeight = LiftHeight.SWITCH;
+        } else if (scaleLimit.get()) {
+            currentHeight = LiftHeight.SCALE;
+        } else {
+            currentHeight = LiftHeight.GROUND;
         }
     }
 

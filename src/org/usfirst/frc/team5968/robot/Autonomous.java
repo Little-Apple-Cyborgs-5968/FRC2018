@@ -27,6 +27,7 @@ public class Autonomous implements IAutonomous {
      */
 	private AutoMode autoModeControl(StartingPoint startingPoint) {
 		String gameData = pollGameData();
+		gameData = "CCC";
 		char robotPosition = 'N';
 		switch (startingPoint) {
 		case RIGHT:
@@ -41,8 +42,8 @@ public class Autonomous implements IAutonomous {
 		default:
 			break;
 		}
-		
-		if (robotPosition == gameData.charAt(0)) {
+		return AutoMode.LINE;
+		/*if (robotPosition == gameData.charAt(0)) {
 			if (robotPosition == gameData.charAt(1)) {
 				return AutoMode.BOTH;
 			} else {
@@ -52,7 +53,7 @@ public class Autonomous implements IAutonomous {
 			return AutoMode.SCALE;
 		} else {
 			return AutoMode.LINE;
-		}
+		}*/
 	}
 	
 	 /*
@@ -62,7 +63,8 @@ public class Autonomous implements IAutonomous {
 	    dashboard = new Dashboard();
 		AutoMode automode = autoModeControl(startingPoint);
 		Alliance alliance = DriverStation.getInstance().getAlliance();
-		switch(automode) {
+        new BaselineAuto(startingPoint, alliance);
+		/*switch(automode) {
 		case SWITCH:
 			new SwitchAuto(startingPoint);
 			break;
@@ -82,7 +84,7 @@ public class Autonomous implements IAutonomous {
 		default:
 			new BaselineAuto(startingPoint, alliance);
 			break;
-		}
+		}*/
 	}
 	
 }

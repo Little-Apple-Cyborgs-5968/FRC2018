@@ -12,9 +12,9 @@ public class ScaleAuto {
     public ScaleAuto(StartingPoint s) {
         startingPoint = s;
         drive = new Drive();
-        grabber = new Grabber();
-        grabber.grab();
-        lift = new Lift(drive);
+        //grabber = new Grabber();
+        //grabber.grab();
+        //lift = new Lift(drive);
         goStraightLong();
     }
     
@@ -30,9 +30,11 @@ public class ScaleAuto {
 	 */	
 	public void liftGrabber() {
 		if (startingPoint == StartingPoint.LEFT) {
-			lift.goToScaleHeight(drive -> turnRight());
+			//lift.goToScaleHeight(drive -> turnRight());
+		    turnRight();
 		} else if (startingPoint==StartingPoint.RIGHT) {
-			lift.goToScaleHeight(drive -> turnLeft());
+			//lift.goToScaleHeight(drive -> turnLeft());
+		    turnLeft();
 		}
 	}
 	
@@ -41,7 +43,7 @@ public class ScaleAuto {
 	 */	
 	public void turnRight() {
 		//drive.rotateDegrees(90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(90.0, rotationSpeed, drive -> openGrabber());
+		drive.rotateDegrees(90.0, rotationSpeed/*, drive -> openGrabber()*/);
 	}
 	
 	/*
@@ -49,7 +51,7 @@ public class ScaleAuto {
 	 */	
 	public void turnLeft() {
 		//drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(-90.0, rotationSpeed, grabber -> openGrabber());
+		drive.rotateDegrees(-90.0, rotationSpeed/*, grabber -> openGrabber()*/);
 	}
 
 	/*

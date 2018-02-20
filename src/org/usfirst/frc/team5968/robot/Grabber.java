@@ -9,7 +9,7 @@ public class Grabber implements IGrabber {
     
     
     public Grabber (){
-        piston = new DoubleSolenoid(0,0); // add ports later
+        piston = new DoubleSolenoid(0,1); // add channels later
         pistonState = PistonState.OPEN;
     }
     

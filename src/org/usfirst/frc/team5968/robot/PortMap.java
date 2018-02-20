@@ -30,9 +30,9 @@ public class PortMap {
     public static int portOf(CAN canDevice) {
         switch(canDevice) {
         case LEFT_MOTOR_CONTROLLER_LEAD:
-            return 3;
-        case LEFT_MOTOR_CONTROLLER_FOLLOWER:
             return 2;
+        case LEFT_MOTOR_CONTROLLER_FOLLOWER:
+            return 3;
         case RIGHT_MOTOR_CONTROLLER_LEAD:
             return 4;
         case RIGHT_MOTOR_CONTROLLER_FOLLOWER:

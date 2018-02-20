@@ -12,9 +12,9 @@ public class SwitchAuto {
     public SwitchAuto(StartingPoint startingPoint) {
         startingPoint = this.startingPoint;
         drive = new Drive();
-        grabber = new Grabber();
-        grabber.grab();
-        lift = new Lift(drive);
+        //grabber = new Grabber();
+        //grabber.grab();
+        //lift = new Lift(drive);
         goStraightLong();
     }
     
@@ -30,9 +30,11 @@ public class SwitchAuto {
 	 */	
 	public void liftGrabber() {
 		if (startingPoint==StartingPoint.LEFT) {
-			lift.goToSwitchHeight(drive -> turnRight());
+			//lift.goToSwitchHeight(drive -> turnRight());
+		    turnRight();
 		} else if (startingPoint==StartingPoint.RIGHT) {
-			lift.goToSwitchHeight(drive -> turnLeft());
+			//lift.goToSwitchHeight(drive -> turnLeft());
+		    turnLeft();
 		}
 	}
 	
@@ -54,7 +56,7 @@ public class SwitchAuto {
 	 * FOURTH STEP: go straight 13 inches 
 	 */	
 	public void goStraightShort() {
-		drive.driveDistance(13.0, driveSpeed, grabber -> openGrabber());
+		drive.driveDistance(13.0, driveSpeed/*, grabber -> openGrabber()*/);
 	}
 	
 	/*

@@ -14,12 +14,14 @@ public class BaselineAuto {
         alliance = this.alliance;
         drive = new Drive();
         goStraight();
+        System.out.println("Baseline Auto");
     }
     
     /*
 	 * FIRST STEP: go straight 168 inches
 	 */	
 	public void goStraight() {
+        System.out.println("Going Straight");
 		drive.driveDistance(168.0, driveSpeed);
 	}
 	

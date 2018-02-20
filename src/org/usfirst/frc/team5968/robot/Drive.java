@@ -38,7 +38,7 @@ public class Drive implements IDrive {
     private final double ROTATION_TOLERANCE = 5;
     
     public Drive() {
-        navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
+        //navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
         rightMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_FOLLOWER));
         rightMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_LEAD));
         leftMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_FOLLOWER));
@@ -52,13 +52,14 @@ public class Drive implements IDrive {
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         
         controlMode = ControlMode.PercentOutput;
+        driveMode = DriveMode.DRIVINGSTRAIGHT;
     }
 
     public void init() {
         distanceInches = 0;
         targetRotations = 0;
         angleToRotate = 0;
-        driveMode = DriveMode.IDLEORMANUAL;
+        //driveMode = DriveMode.IDLEORMANUAL;
         
         // Reset encoders
         leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
@@ -66,7 +67,7 @@ public class Drive implements IDrive {
         
         leftMotorSpeed = 0;
         rightMotorSpeed = 0;
-        navX.resetYaw();
+        //navX.resetYaw();
     }
     
 
@@ -111,6 +112,8 @@ public class Drive implements IDrive {
     @Override
     public void driveDistance(double distanceInches, double speed) {
         driveMode = DriveMode.DRIVINGSTRAIGHT;
+        //System.out.println("---Driving distance");
+        System.out.println("Set drive mode to: " + driveMode);
         driveStraight(ControlMode.Position);
         distanceInches = this.distanceInches;
         targetRotations = (distanceInches / (Math.PI * 6.0)) * 2048;
@@ -130,6 +133,7 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
+        driveMode = DriveMode.DRIVINGSTRAIGHT;
         driveDistance(distanceInches, speed);
         completionRoutine.accept(this);
     }
@@ -149,27 +153,39 @@ public class Drive implements IDrive {
 
     private void driveStraight(ControlMode controlMode) {
         controlMode = ControlMode.Position;
+        System.out.println("Driving straight in method");
     }
     
     private void setMotors(int leftMotorDirection, int rightMotorDirection, DriveMode driveMode) {
         if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
-            leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
-            leftMotorControllerLead.set(controlMode, targetRotations * rightMotorDirection);
+            ///leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
+            //rightMotorControllerLead.set(controlMode, targetRotations * rightMotorDirection);
         } else {
-            leftMotorControllerLead.set(controlMode, leftMotorSpeed * leftMotorDirection);
-            leftMotorControllerLead.set(controlMode, rightMotorSpeed * rightMotorDirection);
+            //leftMotorControllerLead.set(controlMode, -2/*leftMotorSpeed * leftMotorDirection*/);
+            //rightMotorControllerLead.set(controlMode, 2/*rightMotorSpeed * rightMotorDirection*/);
         }
     }
-
+    int i = 0;
+    boolean distance = false;
     @Override
     public void periodic() {
-        if (getCurrentDriveMode() == DriveMode.IDLEORMANUAL) {
+        /*if(i % 5000 == 0) {
+            System.out.println("Nothing is working: " + driveMode);
+        }*/
+        if (driveMode == DriveMode.IDLEORMANUAL) {
             setMotors(1, 1, DriveMode.IDLEORMANUAL);
-        } else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
-            navX.resetYaw();
-            setMotors(-1, 1, DriveMode.DRIVINGSTRAIGHT);
-        }
-        else if (getCurrentDriveMode() == DriveMode.ROTATING) {
+        } 
+        else if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
+            //System.out.println("DRIVING STRAIGHT NOW");
+            //navX.resetYaw();
+            //setMotors(-1, 1, DriveMode.DRIVINGSTRAIGHT);
+            if (!distance) {
+                leftMotorControllerLead.set(ControlMode.Position, 100/*leftMotorSpeed * leftMotorDirection*/);
+                rightMotorControllerLead.set(ControlMode.Position, -100/*rightMotorSpeed * rightMotorDirection*/);
+                distance = true;
+            }
+        } 
+        else if (driveMode == DriveMode.ROTATING) {
             if (Math.abs(navX.getYaw() - angleToRotate) > ROTATION_TOLERANCE) {
                 if ((navX.getYaw() - angleToRotate) < 0) {
                     setMotors(1, -1, DriveMode.ROTATING);
@@ -180,6 +196,10 @@ public class Drive implements IDrive {
                 setMotors(0, 0, DriveMode.IDLEORMANUAL);
             }
         }
+        else {
+            
+        }
+        i++;
     }
     
 }
