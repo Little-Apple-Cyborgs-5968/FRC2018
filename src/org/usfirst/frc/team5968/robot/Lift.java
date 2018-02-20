@@ -94,7 +94,7 @@ public class Lift implements ILift {
             System.out.println(currentHeight);
             //System.out.println();
         }
-        if (desiredHeight == LiftHeight.SCALE) {
+        /*if (desiredHeight == LiftHeight.SCALE) {
             if (currentHeight == LiftHeight.GROUND || currentHeight == LiftHeight.SWITCH) {
                 liftMotor.set(ControlMode.PercentOutput,motorSpeed);
             } else if (currentHeight == LiftHeight.TOP) {
@@ -118,6 +118,19 @@ public class Lift implements ILift {
                 liftMotor.set(ControlMode.PercentOutput, -motorSpeed/9.0);
             }
             
+        }*/
+        if (desiredHeight == LiftHeight.SCALE) {
+            if (currentHeight == LiftHeight.GROUND) {
+                liftMotor.set(ControlMode.PercentOutput, motorSpeed);
+            } else {
+                liftMotor.set(ControlMode.PercentOutput, -motorSpeed / 9.0);
+            }
+        } else if (desiredHeight == LiftHeight.GROUND) {
+            if (currentHeight == LiftHeight.SCALE) {
+                liftMotor.set(ControlMode.PercentOutput, -motorSpeed / 9.0);
+            } else {
+                liftMotor.set(ControlMode.PercentOutput, motorSpeed);
+            }
         }
         i++;
         

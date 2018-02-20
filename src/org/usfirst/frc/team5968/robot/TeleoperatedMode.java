@@ -13,7 +13,7 @@ public class TeleoperatedMode implements IRobotMode {
     //private Joystick rightJoystick;
     
     private final double TOLERANCE = 0.1;
-    private boolean liftMode = false;
+    private boolean liftButtonPressed = false;
     
     public TeleoperatedMode(IDrive drive, ILift lift) {
         //leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
@@ -33,7 +33,7 @@ public class TeleoperatedMode implements IRobotMode {
     int i = 0;
     @Override
     public void periodic() {
-        if (!liftMode) {
+        if (!liftButtonPressed) {
             drive.driveManual(getLeftStick(), getRightStick());
         } else {
             lift.setMotorSpeed(getLeftStick());
@@ -56,9 +56,9 @@ public class TeleoperatedMode implements IRobotMode {
         }
         
         if (getLeftButtonPressed(5)) {
-            liftMode = true;
+            liftButtonPressed = true;
         } else {
-            liftMode = false;
+            liftButtonPressed = false;
         }
         
     }
