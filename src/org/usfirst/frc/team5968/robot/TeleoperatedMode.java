@@ -13,6 +13,7 @@ public class TeleoperatedMode implements IRobotMode {
     //private Joystick rightJoystick;
     
     private final double TOLERANCE = 0.1;
+    private boolean liftMode = false;
     
     public TeleoperatedMode(IDrive drive, ILift lift) {
         //leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
@@ -32,7 +33,12 @@ public class TeleoperatedMode implements IRobotMode {
     int i = 0;
     @Override
     public void periodic() {
-        drive.driveManual(getLeftStick(), getRightStick());
+        if (!liftMode) {
+            drive.driveManual(getLeftStick(), getRightStick());
+        } else {
+            lift.setMotorSpeed(getLeftStick());
+        }
+        
         if (getLeftButtonPressed(5)){
             //grabber.toggleGrabbing();
         }
@@ -41,12 +47,18 @@ public class TeleoperatedMode implements IRobotMode {
             lift.goToGroundHeight();
         }
         
-        if (getRightButtonPressed(4)){
+        /*if (getRightButtonPressed(4)){
             lift.goToSwitchHeight();
-        }
+        }*/
         
         if (getRightButtonPressed(6)){
             lift.goToScaleHeight();
+        }
+        
+        if (getLeftButtonPressed(5)) {
+            liftMode = true;
+        } else {
+            liftMode = false;
         }
         
     }

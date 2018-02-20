@@ -25,5 +25,6 @@ public interface ILift {
      * Called periodically to execute the actions set by the above methods
      */
     public void periodic();
+    public void setMotorSpeed(double speed);
     
 }

@@ -27,7 +27,7 @@ public class Autonomous implements IAutonomous {
      */
 	private AutoMode autoModeControl(StartingPoint startingPoint) {
 		String gameData = pollGameData();
-		gameData = "CCC";
+		gameData = "RRR";
 		char robotPosition = 'N';
 		switch (startingPoint) {
 		case RIGHT:
@@ -42,8 +42,7 @@ public class Autonomous implements IAutonomous {
 		default:
 			break;
 		}
-		return AutoMode.LINE;
-		/*if (robotPosition == gameData.charAt(0)) {
+		if (robotPosition == gameData.charAt(0)) {
 			if (robotPosition == gameData.charAt(1)) {
 				return AutoMode.BOTH;
 			} else {
@@ -53,7 +52,7 @@ public class Autonomous implements IAutonomous {
 			return AutoMode.SCALE;
 		} else {
 			return AutoMode.LINE;
-		}*/
+		}
 	}
 	
 	 /*

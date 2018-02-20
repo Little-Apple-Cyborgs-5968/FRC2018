@@ -35,6 +35,11 @@ public class Lift implements ILift {
         drive = this.drive;
     }
     
+    @Override
+    public void setMotorSpeed(double speed) {
+        motorSpeed = speed;
+    }
+    
     private void goTo (LiftHeight desiredHt) {
         desiredHeight = desiredHt;
     }
