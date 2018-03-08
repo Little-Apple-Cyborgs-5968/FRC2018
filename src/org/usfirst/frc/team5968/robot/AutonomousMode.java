@@ -9,15 +9,13 @@ public class AutonomousMode implements IRobotMode {
     public AutonomousMode(IDrive drive) {
         drive = this.drive;
         autonomous = new Autonomous();
-        startingPoint = StartingPoint.CENTER; //TODO
-        System.out.println("New instance of autonomous mode");
+        startingPoint = StartingPoint.CENTER;
     }
 
     @Override
     public void init() {
         //drive.initAutoPID();
         autonomous.doAuto(startingPoint);
-        System.out.println("AUTO INIT");
     }
 
     @Override

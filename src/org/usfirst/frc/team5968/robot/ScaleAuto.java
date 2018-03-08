@@ -6,15 +6,15 @@ public class ScaleAuto {
     private IDrive drive; 
     private IGrabber grabber;
     private ILift lift;
-    private double rotationSpeed = 0.2;
-    private double driveSpeed = 0.2;
+    private double rotationSpeed = 0.3;
+    private double driveSpeed = 0.5;
 
-    public ScaleAuto(StartingPoint s) {
+    public ScaleAuto(StartingPoint s, IGrabber grabber, ILift lift) {
         startingPoint = s;
         drive = new Drive();
-        //grabber = new Grabber();
-        //grabber.grab();
-        //lift = new Lift(drive);
+        this.grabber = grabber;
+        grabber.grab();
+        this.lift = lift;
         goStraightLong();
     }
     
@@ -22,36 +22,36 @@ public class ScaleAuto {
 	 * FIRST STEP: go straight 324 inches
 	 */	
 	public void goStraightLong() {
-		drive.driveDistance(324.0, 0.4, lift -> liftGrabber());
+		
+		if (startingPoint == StartingPoint.LEFT) {
+	        drive.driveDistance(324.0, driveSpeed, drive -> turnRight());
+        } else if (startingPoint==StartingPoint.RIGHT) {
+            drive.driveDistance(324.0, driveSpeed, drive -> turnLeft());
+        }
 	}
 	
+    /*
+     * SECOND STEP A: turn right towards scale
+     */ 
+    public void turnRight() {
+        //drive.rotateDegrees(90.0, drive -> goStraightShort(drive));
+        drive.rotateDegrees(90.0, rotationSpeed, lift -> liftGrabber());
+    }
+    
+    /*
+     * SECOND STEP B: turn left towards scale
+     */ 
+    public void turnLeft() {
+        //drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
+        drive.rotateDegrees(-90.0, rotationSpeed, lift -> liftGrabber());
+    }
+	
 	/*
-	 * SECOND STEP: lift the grabber to the highest preset
+	 * THIRD STEP: lift the grabber to the highest preset
 	 */	
 	public void liftGrabber() {
-		if (startingPoint == StartingPoint.LEFT) {
-			//lift.goToScaleHeight(drive -> turnRight());
-		    turnRight();
-		} else if (startingPoint==StartingPoint.RIGHT) {
-			//lift.goToScaleHeight(drive -> turnLeft());
-		    turnLeft();
-		}
-	}
-	
-	/*
-	 * THIRD STEP A: turn right towards scale
-	 */	
-	public void turnRight() {
-		//drive.rotateDegrees(90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(90.0, rotationSpeed/*, drive -> openGrabber()*/);
-	}
-	
-	/*
-	 * THIRD STEP B: turn left towards scale
-	 */	
-	public void turnLeft() {
-		//drive.rotateDegrees(-90.0, drive -> goStraightShort(drive));
-		drive.rotateDegrees(-90.0, rotationSpeed/*, grabber -> openGrabber()*/);
+		lift.goToScaleHeight(grabber -> openGrabber());
+
 	}
 
 	/*

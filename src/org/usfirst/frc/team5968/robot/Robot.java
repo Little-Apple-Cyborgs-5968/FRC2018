@@ -13,21 +13,21 @@ public class Robot extends RobotBase {
     private IRobotMode teleoperatedMode;
     
     private IDrive drive;
-    //private IGrabber grabber;
+    private IGrabber grabber;
     private ILift lift;
     
     private IDashboard dashboard;
     
     public Robot() {
         drive = new Drive();
-        //grabber = new Grabber();
+        grabber = new Grabber();
         lift = new Lift(drive);
         dashboard = new Dashboard();
         
         disabledMode = new DisabledMode();
         autonomousMode = new AutonomousMode(drive);
-        teleoperatedMode = new TeleoperatedMode(drive, lift);
-        //CameraServer.getInstance().startAutomaticCapture();
+        teleoperatedMode = new TeleoperatedMode(drive, lift, grabber);
+        CameraServer.getInstance().startAutomaticCapture();
     }
     
     @Override
@@ -54,7 +54,7 @@ public class Robot extends RobotBase {
     
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
-        //grabber.periodic();
+        grabber.periodic();
         lift.periodic();
     }
     

@@ -27,8 +27,8 @@ public class Lift implements ILift {
     
     public Lift(IDrive drive) {
         switchLimit = new DigitalInput(1);
-        scaleLimit = new DigitalInput(2);
-        groundLimit = new DigitalInput(0);
+        scaleLimit = new DigitalInput(9);
+        groundLimit = new DigitalInput(8);
         System.out.println("New Lift");
         liftMotor = new TalonSRX(PortMap.portOf(CAN.LIFT_MOTOR_CONTROLLER));
         motorSpeed = 0.9;

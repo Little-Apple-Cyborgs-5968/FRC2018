@@ -5,13 +5,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class BaselineAuto {
 	
 	private StartingPoint startingPoint;
-	private Alliance alliance;
 	private IDrive drive;
-	private double driveSpeed = 0.2;
+	private double driveSpeed = 0.5;
 
-    public BaselineAuto(StartingPoint startingPoint, Alliance alliance) {
+    public BaselineAuto(StartingPoint startingPoint) {
         startingPoint = this.startingPoint;
-        alliance = this.alliance;
         drive = new Drive();
         goStraight();
         System.out.println("Baseline Auto");

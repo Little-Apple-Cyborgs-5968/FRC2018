@@ -77,30 +77,27 @@ public class Drive implements IDrive {
         
 
         /* set the peak, nominal outputs, and deadband */
-        leftMotorControllerLead.configNominalOutputForward(0, 0);
+        /*leftMotorControllerLead.configNominalOutputForward(0, 0);
         leftMotorControllerLead.configNominalOutputReverse(0, 0);
         leftMotorControllerLead.configPeakOutputForward(.5, 0);
         leftMotorControllerLead.configPeakOutputReverse(-.5, 0);
        
-        /* set closed loop gains in slot0 */
         leftMotorControllerLead.config_kF(0, 0, 0);
         leftMotorControllerLead.config_kP(0, 0.58, 0);
         leftMotorControllerLead.config_kI(0, 0, 0);
         leftMotorControllerLead.config_kD(0, 0.08, 0);
         leftMotorControllerLead.config_IntegralZone(0, 100, 0);
         
-        /* set the peak, nominal outputs, and deadband */
         rightMotorControllerLead.configNominalOutputForward(0, 0);
         rightMotorControllerLead.configNominalOutputReverse(0, 0);
         rightMotorControllerLead.configPeakOutputForward(.5, 0);
         rightMotorControllerLead.configPeakOutputReverse(-.5, 0);
         rightMotorControllerLead.config_IntegralZone(0, 100, 0);
        
-        /* set closed loop gains in slot0 */
         rightMotorControllerLead.config_kF(0, 0, 0);
         rightMotorControllerLead.config_kP(0, 0.56, 0);
         rightMotorControllerLead.config_kI(0, 0, 0);
-        rightMotorControllerLead.config_kD(0, 0.51, 0);
+        rightMotorControllerLead.config_kD(0, 0.51, 0);*/
     }
     
     
@@ -158,11 +155,11 @@ public class Drive implements IDrive {
     
     private void setMotors(int leftMotorDirection, int rightMotorDirection, DriveMode driveMode) {
         if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
-            ///leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
-            //rightMotorControllerLead.set(controlMode, targetRotations * rightMotorDirection);
+            leftMotorControllerLead.set(controlMode, Math.pow(targetRotations * leftMotorDirection, 3));
+            rightMotorControllerLead.set(controlMode, Math.pow(targetRotations * rightMotorDirection, 3));
         } else {
-            //leftMotorControllerLead.set(controlMode, -2/*leftMotorSpeed * leftMotorDirection*/);
-            //rightMotorControllerLead.set(controlMode, 2/*rightMotorSpeed * rightMotorDirection*/);
+            leftMotorControllerLead.set(controlMode, -leftMotorSpeed * leftMotorDirection);
+            rightMotorControllerLead.set(controlMode, -rightMotorSpeed * rightMotorDirection);
         }
     }
     int i = 0;

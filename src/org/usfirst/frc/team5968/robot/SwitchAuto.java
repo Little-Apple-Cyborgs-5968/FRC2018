@@ -5,16 +5,14 @@ public class SwitchAuto {
 	private StartingPoint startingPoint;
 	private IDrive drive;
 	private IGrabber grabber;
-	private ILift lift;
-	private final double rotationSpeed = 0.2;
-	private final double driveSpeed = 0.2;
+	private final double rotationSpeed = 0.3;
+	private final double driveSpeed = 0.5;
 
-    public SwitchAuto(StartingPoint startingPoint) {
+    public SwitchAuto(StartingPoint startingPoint, IGrabber grabber) {
         startingPoint = this.startingPoint;
         drive = new Drive();
-        //grabber = new Grabber();
-        //grabber.grab();
-        //lift = new Lift(drive);
+        this.grabber = grabber;
+        grabber.grab();
         goStraightLong();
     }
     
@@ -22,13 +20,19 @@ public class SwitchAuto {
 	 * FIRST STEP: go straight 168 inches
 	 */	
 	public void goStraightLong() {
-		drive.driveDistance(168.0, 0.4, lift -> liftGrabber());
+		
+		if (startingPoint==StartingPoint.LEFT) {
+		    drive.driveDistance(168.0, driveSpeed, drive -> turnRight());
+        } else if (startingPoint==StartingPoint.RIGHT) {
+            drive.driveDistance(168.0, driveSpeed, drive -> turnLeft());
+        }
 	}
 	
 	/*
 	 * SECOND STEP: lift the grabber to the highest preset
+	 * (Not necessary, as we can just set the lift to the correct height beforehand)
 	 */	
-	public void liftGrabber() {
+	/*public void liftGrabber() {
 		if (startingPoint==StartingPoint.LEFT) {
 			//lift.goToSwitchHeight(drive -> turnRight());
 		    turnRight();
@@ -36,7 +40,7 @@ public class SwitchAuto {
 			//lift.goToSwitchHeight(drive -> turnLeft());
 		    turnLeft();
 		}
-	}
+	}*/
 	
 	/*
 	 * THIRD STEP A: turn right towards scale
@@ -56,7 +60,7 @@ public class SwitchAuto {
 	 * FOURTH STEP: go straight 13 inches 
 	 */	
 	public void goStraightShort() {
-		drive.driveDistance(13.0, driveSpeed/*, grabber -> openGrabber()*/);
+		drive.driveDistance(13.0, driveSpeed, grabber -> openGrabber());
 	}
 	
 	/*
