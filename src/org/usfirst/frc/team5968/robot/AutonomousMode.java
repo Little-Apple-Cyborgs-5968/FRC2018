@@ -2,13 +2,17 @@ package org.usfirst.frc.team5968.robot;
 
 public class AutonomousMode implements IRobotMode {
 
-    private Drive drive;
+    private IDrive drive;
     private Autonomous autonomous;
     private StartingPoint startingPoint;
+    private IGrabber grabber;
+    private ILift lift;
     
-    public AutonomousMode(IDrive drive) {
-        drive = this.drive;
-        autonomous = new Autonomous();
+    public AutonomousMode(IDrive drive, IGrabber grabber, ILift lift) {
+        this.drive = drive;
+        this.grabber = grabber;
+        this.lift = lift;
+        autonomous = new Autonomous(this.drive, this.grabber, this.lift);
         startingPoint = StartingPoint.CENTER;
     }
 

@@ -8,9 +8,9 @@ public class BaselineAuto {
 	private IDrive drive;
 	private double driveSpeed = 0.5;
 
-    public BaselineAuto(StartingPoint startingPoint) {
+    public BaselineAuto(StartingPoint startingPoint, IDrive drive) {
         startingPoint = this.startingPoint;
-        drive = new Drive();
+        this.drive = drive;
         goStraight();
         System.out.println("Baseline Auto");
     }

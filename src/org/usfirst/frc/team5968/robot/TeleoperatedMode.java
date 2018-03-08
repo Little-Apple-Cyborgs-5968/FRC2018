@@ -15,7 +15,7 @@ public class TeleoperatedMode implements IRobotMode {
     private final double TOLERANCE = 0.1;
     private boolean liftButtonPressed = false;
     
-    public TeleoperatedMode(IDrive drive, ILift lift, IGrabber grabber) {
+    public TeleoperatedMode(IDrive drive, IGrabber grabber, ILift lift) {
         leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
         rightJoystick = new Joystick(PortMap.portOf(USB.RIGHT));
         

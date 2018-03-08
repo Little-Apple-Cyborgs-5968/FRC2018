@@ -8,11 +8,10 @@ public class SwitchAuto {
 	private final double rotationSpeed = 0.3;
 	private final double driveSpeed = 0.5;
 
-    public SwitchAuto(StartingPoint startingPoint, IGrabber grabber) {
+    public SwitchAuto(StartingPoint startingPoint, IDrive drive, IGrabber grabber) {
         startingPoint = this.startingPoint;
-        drive = new Drive();
+        this.drive = drive;
         this.grabber = grabber;
-        grabber.grab();
         goStraightLong();
     }
     

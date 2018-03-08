@@ -9,11 +9,10 @@ public class ScaleAuto {
     private double rotationSpeed = 0.3;
     private double driveSpeed = 0.5;
 
-    public ScaleAuto(StartingPoint s, IGrabber grabber, ILift lift) {
+    public ScaleAuto(StartingPoint s, IDrive drive, IGrabber grabber, ILift lift) {
         startingPoint = s;
-        drive = new Drive();
+        this.drive = drive;
         this.grabber = grabber;
-        grabber.grab();
         this.lift = lift;
         goStraightLong();
     }

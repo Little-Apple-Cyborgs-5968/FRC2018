@@ -6,10 +6,12 @@ public class Autonomous implements IAutonomous {
     
     private Dashboard dashboard;
     
+    private IDrive drive;
     private IGrabber grabber;
     private ILift lift;
     
-    public Autonomous(IGrabber grabber, ILift lift) {
+    public Autonomous(IDrive drive, IGrabber grabber, ILift lift) {
+        this.drive = drive;
         this.grabber = grabber;
         this.lift = lift;
     }
@@ -70,23 +72,23 @@ public class Autonomous implements IAutonomous {
 		AutoMode automode = autoModeControl(startingPoint);
 		switch(automode) {
 		case SWITCH:
-			new SwitchAuto(startingPoint, grabber);
+			new SwitchAuto(startingPoint, drive, grabber);
 			break;
 		case SCALE:
-			new ScaleAuto(startingPoint, grabber, lift);
+			new ScaleAuto(startingPoint, drive, grabber, lift);
 			break;
 		case BOTH:
 			AutoMode modeIfBothOnOurSide = dashboard.chooseModeforBoth();
 			if (modeIfBothOnOurSide == AutoMode.SWITCH) {
-				new SwitchAuto(startingPoint, grabber);
+				new SwitchAuto(startingPoint, drive, grabber);
 			} else if (modeIfBothOnOurSide == AutoMode.SCALE) {
-				new ScaleAuto(startingPoint, grabber, lift);
+				new ScaleAuto(startingPoint, drive, grabber, lift);
 			} else {
-				new BaselineAuto(startingPoint);
+				new BaselineAuto(startingPoint, drive);
 			}
 			break;
 		default:
-			new BaselineAuto(startingPoint);
+			new BaselineAuto(startingPoint, drive);
 			break;
 		}
 	}
