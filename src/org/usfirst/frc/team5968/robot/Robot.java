@@ -25,7 +25,7 @@ public class Robot extends RobotBase {
         dashboard = new Dashboard();
         
         disabledMode = new DisabledMode(grabber);
-        autonomousMode = new AutonomousMode(drive, grabber, lift);
+        autonomousMode = new AutonomousMode(drive, grabber, lift, fieldInformation, dashboard);
         teleoperatedMode = new TeleoperatedMode(drive, grabber, lift);
         CameraServer.getInstance().startAutomaticCapture();
     }
