@@ -23,8 +23,8 @@ public class Lift implements ILift {
     private double liftSpeed = 0.9;
 
     private double moveDirection = 0.0;
-    private static final moveUp = 1.0;
-    private static final moveDown = -1.0 / 9.0; // When moving down, we want to go slow to avoid crashing into the ground.
+    private static final double moveUp = 1.0;
+    private static final double moveDown = -1.0 / 9.0; // When moving down, we want to go slow to avoid crashing into the ground.
 
     private Runnable currentCompletionRoutine;
 
@@ -48,7 +48,7 @@ public class Lift implements ILift {
         liftSpeed = Math.abs(speed); // Don't allow negative speeds since this kills the lift.
     }
 
-    private void setCompletionRountime(Runnable completionRountime) {
+    private void setCompletionRoutine(Runnable completionRountime) {
         // If there's already a completion routine, fail because that means an action was interrupted, and we don't allow that.
         // Note that because we check this before seeing if a completion routine is being configured at all, we are saying that
         // even goTo*Height() without a completion routine must not be called until an action is completed.
@@ -74,13 +74,13 @@ public class Lift implements ILift {
 
     @Override
     public void goToGroundHeight(Runnable completionRoutine) {
-        setCompletionRountime(completionRoutine);
+        setCompletionRoutine(completionRoutine);
         moveDirection = moveDown;
     }
 
     @Override
     public void goToScaleHeight(Runnable completionRoutine) {
-        setCompletionRountime(completionRoutine);
+        setCompletionRoutine(completionRoutine);
         moveDirection = moveUp;
     }
 
@@ -96,13 +96,17 @@ public class Lift implements ILift {
 
     // Returns true if the lift should stop moving during this tick, false otherwise
     private boolean shouldStopMoving() {
+        boolean topHit = !topLimit.get();
+        boolean groundHit = !groundLimit.get();
+        
+        // Debug.logPeriodic("Top hit: " + topHit + ", Ground hit: " + groundHit + ", Move direction " + moveDirection);
         // If we are moving up, but we've hit the top:
-        if (moveDirection > 0.0 && topLimit.get()) {
+        if (moveDirection > 0.0 && topHit) {
             return true;
         }
 
         // If we are moving down, but we've hit the bottom:
-        if (moveDirection < 0.0 && bottomLimit.get()) {
+        if (moveDirection < 0.0 && groundHit) {
             return true;
         }
 

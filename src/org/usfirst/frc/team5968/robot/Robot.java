@@ -15,25 +15,26 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IGrabber grabber;
     private ILift lift;
+    private IFieldInformation fieldInformation;
     
     private IDashboard dashboard;
     
     public Robot() {
         drive = new Drive();
         grabber = new Grabber();
-        lift = new Lift(drive);
-        dashboard = new Dashboard();
+        lift = new Lift();
+        dashboard = new HardCodedDashboard();
+        fieldInformation = new FieldInformation();
         
-        disabledMode = new DisabledMode(grabber);
+        disabledMode = new DisabledMode(grabber, fieldInformation);
         autonomousMode = new AutonomousMode(drive, grabber, lift, fieldInformation, dashboard);
         teleoperatedMode = new TeleoperatedMode(drive, grabber, lift);
-        CameraServer.getInstance().startAutomaticCapture();
+        //TODO: CameraServer.getInstance().startAutomaticCapture();
     }
     
     @Override
     public void startCompetition() {
         HAL.observeUserProgramStarting();
-        LiveWindow.setEnabled(isTest());
         
         IRobotMode currentMode = null;
         IRobotMode desiredMode = null;
@@ -42,6 +43,8 @@ public class Robot extends RobotBase {
             desiredMode = getDesiredMode();
         
             if (desiredMode != currentMode) {
+                LiveWindow.setEnabled(isTest());
+                doPeripheralReinitialization();
             	desiredMode.init();
             	currentMode = desiredMode;
             }
@@ -52,10 +55,15 @@ public class Robot extends RobotBase {
         }
     }
     
+    private void doPeripheralReinitialization() {
+        drive.init();
+        lift.init();
+    }
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         grabber.periodic();
         lift.periodic();
+        Debug.periodic();
     }
     
     private IRobotMode getDesiredMode() {

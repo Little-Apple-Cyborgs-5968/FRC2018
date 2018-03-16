@@ -3,9 +3,11 @@ package org.usfirst.frc.team5968.robot;
 public class DisabledMode implements IRobotMode {
     
     private IGrabber grabber;
+    private IFieldInformation fieldInformation;
 
-    public DisabledMode(IGrabber grabber) {
+    public DisabledMode(IGrabber grabber, IFieldInformation fieldInformation) {
         this.grabber = grabber;
+        this.fieldInformation = fieldInformation;
     }
 
     @Override
@@ -15,6 +17,7 @@ public class DisabledMode implements IRobotMode {
 
     @Override
     public void periodic() {
+        fieldInformation.refresh();
     }
 
 }

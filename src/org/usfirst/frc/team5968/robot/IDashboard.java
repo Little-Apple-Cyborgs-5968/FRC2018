@@ -10,5 +10,5 @@ public interface IDashboard {
     /*
      * Get the starting position for the robot.
      */
-    public FieldSide getMatchStartingPoint();
+    public FieldPosition getMatchStartingPoint();
 }

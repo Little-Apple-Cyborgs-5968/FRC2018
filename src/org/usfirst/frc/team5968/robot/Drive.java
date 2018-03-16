@@ -33,7 +33,7 @@ public class Drive implements IDrive {
     private static final double ROTATION_TOLERANCE = 5;
 
     private static final double ENCODER_RESOLUTION = 2048.0;
-    private static final double WHEEL_DIAMETER = 6.6; // inches
+    private static final double WHEEL_DIAMETER = 6.0; // inches
 
     private IEncoder leftEncoder;
     private IEncoder rightEncoder;
@@ -54,9 +54,9 @@ public class Drive implements IDrive {
         leftEncoder.setDistancePerPulse(distancePerPulse);
         rightEncoder.setDistancePerPulse(distancePerPulse);
 
-        leftEncoder.setInverted(true);
-        leftMotorControllerFollow.setInverted(true);
-        leftMotorControllerLead.setInverted(true);
+        rightEncoder.setInverted(true);
+        rightMotorControllerFollow.setInverted(true);
+        rightMotorControllerLead.setInverted(true);
 
         leftMotorControllerFollow.follow(leftMotorControllerLead);
         rightMotorControllerFollow.follow(rightMotorControllerLead);
@@ -68,6 +68,8 @@ public class Drive implements IDrive {
         distanceInches = 0;
         angleToRotate = 0;
         stop();
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
     
     @Override
@@ -77,31 +79,33 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double speed) {
+        driveDistance(distanceInches, speed, null);
+    }
+
+    @Override
+    public void rotateDegrees(double angle, double speed) {
+        rotateDegrees(angle, speed, null);
+    }
+
+    @Override
+    public void driveDistance(double distanceInches, double speed, Runnable completionRoutine) {
+        setCompletionRoutine(completionRoutine);
+        leftMotorSpeed = speed;
+        rightMotorSpeed = speed;
         driveMode = DriveMode.DRIVINGSTRAIGHT;
-        distanceInches = this.distanceInches;
+        this.distanceInches = distanceInches;
         leftEncoder.reset();
         rightEncoder.reset();
     }
 
     @Override
-    public void rotateDegrees(double angle, double speed) {
+    public void rotateDegrees(double relativeAngle, double speed, Runnable completionRoutine) {
+        setCompletionRoutine(completionRoutine);
         driveMode = DriveMode.ROTATING;
         navX.resetYaw();
         leftMotorSpeed = 0.2;
-        rightMotorSpeed = -0.2;
-        angleToRotate = angle;
-    }
-
-    @Override
-    public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
-        driveDistance(distanceInches, speed);
-        completionRoutine.accept(this);
-    }
-
-    @Override
-    public void rotateDegrees(double relativeAngle, double speed, Consumer<IDrive> completionRoutine) {
-        rotateDegrees(relativeAngle, speed);
-        completionRoutine.accept(this);
+        rightMotorSpeed = 0.2;
+        angleToRotate = relativeAngle;
     }
 
     @Override
@@ -116,6 +120,7 @@ public class Drive implements IDrive {
     }
     
     private void setMotors(double leftMotorDirection, double rightMotorDirection) {
+        // Debug.logPeriodic("Left motor speed: " + leftMotorSpeed + ", direction: " + leftMotorDirection);
         leftMotorControllerLead.set(ControlMode.PercentOutput, leftMotorSpeed * leftMotorDirection);
         rightMotorControllerLead.set(ControlMode.PercentOutput, rightMotorSpeed * rightMotorDirection);
     }
@@ -129,11 +134,35 @@ public class Drive implements IDrive {
         stop();
     }
 
+    private void setCompletionRoutine(Runnable completionRountime) {
+        // If there's already a completion routine, fail because that means an action was interrupted, and we don't allow that.
+        // Note that because we check this before seeing if a completion routine is being configured at all, we are saying that
+        // even goTo*Height() without a completion routine must not be called until an action is completed.
+        // The exception to this is if the action is explicitly aborted with abortCurrentAction.
+        /*
+        Other sensible things we could do here:
+        A) Replace the completion routine - we're essentially canceling the action. (This might be confusing though - maybe print a warning.)
+        B) Combine the completion routines:
+        Runnable oldCompletionRoutine = currentCompletionRoutine; // Note: This may seem pointless, but it's actually very important! (Ask me to explain some other time.)
+        Runnable combinedCompletionRoutine = () ->
+        {
+            oldCompletionRoutine.run();
+            completionRoutine.run();
+        };
+        currentCompletionRoutine = combinedCompletionRoutine;
+        */
+        if (currentCompletionRoutine != null) {
+            throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
+        }
+
+        currentCompletionRoutine = completionRountime;
+    }
+    
     @Override
     public void periodic() {
         //TODO: Remove me once we confirm encoders are correct.
-        Debug.logPeriodic("Encoders: " + leftEncoder.getDistance().toString() + ", " + rightEncoder.getDistance().toString() + " inches");
-
+        // Debug.logPeriodic("Encoders: " + leftEncoder.getDistance() + ", " + rightEncoder.getDistance() + " inches");
+        // Debug.logPeriodic("Distance inches: " + distanceInches + ", drive mode: " + driveMode);
         if (driveMode == DriveMode.IDLEORMANUAL) {
             setMotors(1, 1);
         } 
@@ -142,7 +171,7 @@ public class Drive implements IDrive {
 
             // Check if we've completed our travel
             double averageDistanceTraveled = (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
-
+            // Debug.logPeriodic("Avg distance: " + averageDistanceTraveled);
             if (averageDistanceTraveled > distanceInches) {
                 handleActionEnd();
             }
@@ -162,7 +191,7 @@ public class Drive implements IDrive {
             }
         }
         else {
-            throw new InvalidStateException("Drive controller is in an invalid drive mode.");
+            throw new IllegalStateException("Drive controller is in an invalid drive mode.");
         }
     }
 }

@@ -12,6 +12,8 @@ public class TeleoperatedMode implements IRobotMode {
     private Joystick leftJoystick;
     private Joystick rightJoystick;
     
+    private boolean lastGrabberButtonState = false;
+    
     private final double TOLERANCE = 0.1;
     
     public TeleoperatedMode(IDrive drive, IGrabber grabber, ILift lift) {
@@ -30,17 +32,19 @@ public class TeleoperatedMode implements IRobotMode {
 
     @Override
     public void periodic() {
-        if (!getLeftButtonPressed(5)) {
+        if (!getLeftButtonPressed(6)) {
             drive.driveManual(getLeftStick(), getRightStick());
         } else {
-            lift.setMotorSpeed(getLeftStick());
+            lift.setLiftSpeed(getLeftStick());
         }
         
-        if (getLeftButtonPressed(5)){
+        boolean currentGrabberButtonState = getLeftButtonPressed(5);
+        if (currentGrabberButtonState && currentGrabberButtonState != lastGrabberButtonState) {
             grabber.toggleGrabbing();
         }
+        lastGrabberButtonState = currentGrabberButtonState;
         
-        if (getRightButtonPressed(3)){
+        if (getRightButtonPressed(4)){
             lift.goToGroundHeight();
         }
         
@@ -51,12 +55,12 @@ public class TeleoperatedMode implements IRobotMode {
     
     private double getLeftStick() {
         double leftY = leftJoystick.getY();
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : leftY;
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : -leftY;
     }
     
     private double getRightStick() {
         double rightY = rightJoystick.getY();
-        return (Math.abs(rightY) < TOLERANCE) ? 0 : rightY;
+        return (Math.abs(rightY) < TOLERANCE) ? 0 : -rightY;
     }
     
     private boolean getLeftButtonPressed(int buttonNumber) {

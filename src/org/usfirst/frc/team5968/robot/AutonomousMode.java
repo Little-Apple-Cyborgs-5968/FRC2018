@@ -20,17 +20,17 @@ public class AutonomousMode implements IRobotMode {
 
     private AutoMode determineAutoMode() {
         // If no field information is available, default to the LINE strategy
-        if (!fieldInformation.isDataValid()) {
+        if (!fieldInformation.getIsDataValid()) {
             return AutoMode.LINE;
         }
 
         // Determine the appropriate autonomous mode based on our position
-        FieldSide ourSide = dashboard.getMatchStartingPoint();
+        FieldPosition ourSide = dashboard.getMatchStartingPoint();
         boolean switchSameSide = fieldInformation.getNearSwitchPosition() == ourSide;
         boolean scaleSameSide = fieldInformation.getScalePosition() == ourSide;
 
         // We always want to use the LINE strategy when we're in the center lane
-        if (ourSide == FieldSide.CENTER) {
+        if (ourSide == FieldPosition.CENTER) {
             return AutoMode.LINE;
         }
 
@@ -51,18 +51,15 @@ public class AutonomousMode implements IRobotMode {
      */
     private IRobotMode getAutoModeImplementation() {
         AutoMode autoMode = determineAutoMode();
-        FieldSide startingPoint = dashboard.getMatchStartingPoint();
+        FieldPosition startingPoint = dashboard.getMatchStartingPoint();
 
-        switch (automode) {
+        switch (autoMode) {
             case SWITCH:
-                new SwitchAuto(startingPoint, drive, grabber);
-                break;
+                return new SwitchAuto(startingPoint, drive, grabber);
             case SCALE:
-                new ScaleAuto(startingPoint, drive, grabber, lift);
-                break;
+                return new ScaleAuto(startingPoint, drive, grabber, lift);
             case LINE:
-                new BaselineAuto(startingPoint, drive);
-                break;
+                return new BaselineAuto(startingPoint, drive);
             default:
                 throw new IllegalArgumentException("Tried to instantiate invalid autonomous mode.");
         }
@@ -70,8 +67,9 @@ public class AutonomousMode implements IRobotMode {
 
     @Override
     public void init() {
-        fieldInformation.update();
+        fieldInformation.refresh();
         autonomousSubMode = getAutoModeImplementation();
+        Debug.log(autonomousSubMode.getClass().getName() + " mode is starting");
         autonomousSubMode.init();
     }
 
