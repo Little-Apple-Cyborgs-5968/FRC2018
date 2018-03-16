@@ -13,7 +13,6 @@ public class TeleoperatedMode implements IRobotMode {
     private Joystick rightJoystick;
     
     private final double TOLERANCE = 0.1;
-    private boolean liftButtonPressed = false;
     
     public TeleoperatedMode(IDrive drive, IGrabber grabber, ILift lift) {
         leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
@@ -26,13 +25,12 @@ public class TeleoperatedMode implements IRobotMode {
 
     @Override
     public void init() {
-        System.out.println("NEW");
         drive.init();
     }
 
     @Override
     public void periodic() {
-        if (!liftButtonPressed) {
+        if (!getLeftButtonPressed(5)) {
             drive.driveManual(getLeftStick(), getRightStick());
         } else {
             lift.setMotorSpeed(getLeftStick());
@@ -42,20 +40,13 @@ public class TeleoperatedMode implements IRobotMode {
             grabber.toggleGrabbing();
         }
         
-        /*if (getRightButtonPressed(3)){
+        if (getRightButtonPressed(3)){
             lift.goToGroundHeight();
-        }
-        
-        if (getRightButtonPressed(4)){
-            lift.goToSwitchHeight();
         }
         
         if (getRightButtonPressed(6)){
             lift.goToScaleHeight();
         }
-        */
-        // Set whether the left joystick will control the lift or the left side of the drive base
-        liftButtonPressed = getLeftButtonPressed(5) ? true : false;
     }
     
     private double getLeftStick() {
