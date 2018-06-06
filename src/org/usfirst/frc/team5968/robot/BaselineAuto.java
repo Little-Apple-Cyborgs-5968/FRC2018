@@ -25,10 +25,10 @@ public class BaselineAuto implements IRobotMode {
     }
 
     /*
-     * FIRST STEP: go straight 168 inches
+     * FIRST STEP: go straight 148 inches
      */ 
     public void goStraight() {
-        drive.driveDistance(168.0, driveSpeed);
+        drive.driveDistance(140.0, driveSpeed);
     }
     
 }

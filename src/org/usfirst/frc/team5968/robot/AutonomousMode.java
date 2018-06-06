@@ -52,10 +52,9 @@ public class AutonomousMode implements IRobotMode {
     private IRobotMode getAutoModeImplementation() {
         AutoMode autoMode = determineAutoMode();
         FieldPosition startingPoint = dashboard.getMatchStartingPoint();
-
         switch (autoMode) {
             case SWITCH:
-                return new SwitchAuto(startingPoint, drive, grabber);
+                return new SwitchAuto(startingPoint, drive, grabber, lift);
             case SCALE:
                 return new ScaleAuto(startingPoint, drive, grabber, lift);
             case LINE:

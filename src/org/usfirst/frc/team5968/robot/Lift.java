@@ -121,8 +121,9 @@ public class Lift implements ILift {
 
             // Since we just completed and action, dispatch the current completion routine if we have one
             if (currentCompletionRoutine != null) {
-                currentCompletionRoutine.run();
+                Runnable oldCompletionRoutine = currentCompletionRoutine;
                 currentCompletionRoutine = null;
+                oldCompletionRoutine.run();
             }
         } else { // Otherwise, keep moving in the appropriate direction
             liftMotor.set(ControlMode.PercentOutput, moveDirection * liftSpeed);

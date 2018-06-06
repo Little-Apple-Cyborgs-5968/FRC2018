@@ -55,12 +55,12 @@ public class TeleoperatedMode implements IRobotMode {
     
     private double getLeftStick() {
         double leftY = leftJoystick.getY();
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : -leftY;
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, 3);
     }
     
     private double getRightStick() {
         double rightY = rightJoystick.getY();
-        return (Math.abs(rightY) < TOLERANCE) ? 0 : -rightY;
+        return (Math.abs(rightY) < TOLERANCE) ? 0 : -Math.pow(rightY, 3);
     }
     
     private boolean getLeftButtonPressed(int buttonNumber) {

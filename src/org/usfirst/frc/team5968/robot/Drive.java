@@ -24,6 +24,7 @@ public class Drive implements IDrive {
     
     private double leftMotorSpeed;
     private double rightMotorSpeed;
+    private double driveStraightSpeed;
     
     private double distanceInches;
     private double angleToRotate;
@@ -54,7 +55,7 @@ public class Drive implements IDrive {
         leftEncoder.setDistancePerPulse(distancePerPulse);
         rightEncoder.setDistancePerPulse(distancePerPulse);
 
-        rightEncoder.setInverted(true);
+        leftEncoder.setInverted(true);
         rightMotorControllerFollow.setInverted(true);
         rightMotorControllerLead.setInverted(true);
 
@@ -65,6 +66,7 @@ public class Drive implements IDrive {
     }
 
     public void init() {
+        currentCompletionRoutine = null;
         distanceInches = 0;
         angleToRotate = 0;
         stop();
@@ -92,6 +94,7 @@ public class Drive implements IDrive {
         setCompletionRoutine(completionRoutine);
         leftMotorSpeed = speed;
         rightMotorSpeed = speed;
+        driveStraightSpeed = speed;
         driveMode = DriveMode.DRIVINGSTRAIGHT;
         this.distanceInches = distanceInches;
         leftEncoder.reset();
@@ -108,15 +111,22 @@ public class Drive implements IDrive {
         angleToRotate = relativeAngle;
     }
 
-    @Override
-    public void driveManual(double leftSpeed, double rightSpeed) {
+
+    private void driveManualImplementation(double leftSpeed, double rightSpeed) {
         driveMode = DriveMode.IDLEORMANUAL;
         leftMotorSpeed = leftSpeed;
         rightMotorSpeed = rightSpeed;
     }
+    
+    @Override
+    public void driveManual(double leftSpeed, double rightSpeed) {
+        setCompletionRoutine(null);
+        driveManualImplementation(leftSpeed, rightSpeed);
+    }
 
-    public void stop() {
-        driveManual(0.0, 0.0);
+    private void stop() {
+        driveManualImplementation(0.0, 0.0);
+        driveStraightSpeed = 0.0;
     }
     
     private void setMotors(double leftMotorDirection, double rightMotorDirection) {
@@ -126,12 +136,13 @@ public class Drive implements IDrive {
     }
 
     private void handleActionEnd() {
-        if (currentCompletionRoutine != null) {
-            currentCompletionRoutine.run();
-            currentCompletionRoutine = null;
-        }
-
         stop();
+        
+        if (currentCompletionRoutine != null) {
+            Runnable oldCompletionRoutine = currentCompletionRoutine;
+            currentCompletionRoutine = null;
+            oldCompletionRoutine.run();
+        }
     }
 
     private void setCompletionRoutine(Runnable completionRountime) {
@@ -157,6 +168,31 @@ public class Drive implements IDrive {
 
         currentCompletionRoutine = completionRountime;
     }
+
+    private static final boolean enableSmartDriveStraight = false;
+    private static final double driveStraightBackPedalMultiplier = 0.5;
+    private static final double driveStraightTolerance = 0.25; // inches
+
+    // "Smart" drive straight logic
+    // Automatically adjusts motor speeds to try and keep encoders balanced within a tolerance.
+    // Only relatively smart, a nicer implementation would try to dynamically choose a value for driveStraightBackPedalMultiplier.
+    private void smartDriveStraightPeriodic() {
+        // negative when left is behind, positive when left is ahead
+        double encoderDifference = leftEncoder.getDistance() - rightEncoder.getDistance();
+
+        if (Math.abs(encoderDifference) < driveStraightTolerance) {
+            leftMotorSpeed = driveStraightSpeed;
+            rightMotorSpeed = driveStraightSpeed;
+        } else if (encoderDifference < 0.0) {
+            leftMotorSpeed = driveStraightSpeed;
+            rightMotorSpeed = driveStraightSpeed * driveStraightBackPedalMultiplier;
+        } else {
+            leftMotorSpeed = driveStraightSpeed * driveStraightBackPedalMultiplier;
+            rightMotorSpeed = driveStraightSpeed;
+        }
+
+        // Debug.logPeriodic("Smart drive: " + leftMotorSpeed + ", " + rightMotorSpeed + " (encoder difference: " + encoderDifference + ")");
+    }
     
     @Override
     public void periodic() {
@@ -167,6 +203,12 @@ public class Drive implements IDrive {
             setMotors(1, 1);
         } 
         else if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
+            // Process smart drive speed logic if enabled
+            if (enableSmartDriveStraight) {
+                smartDriveStraightPeriodic();
+            }
+            
+            // Set the speed of the motors
             setMotors(1, 1);
 
             // Check if we've completed our travel
