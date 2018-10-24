@@ -3,50 +3,12 @@ package org.usfirst.frc.team5968.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-
 import java.lang.Runnable;
 import java.lang.IllegalStateException;
+
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 public class Lift implements ILift {
-
-    private LiftHeight desiredHeight;
-    private LiftHeight currentHeight;
-    
-    private DigitalInput groundLimit;
-    private DigitalInput switchLimit;
-    private DigitalInput scaleLimit;
-    private DigitalInput topLimit;
-    
-    private static double motorSpeed;
-    
-    private Drive drive;
-
-public class Lift implements ILift{
-
-    private LiftHeight desiredHeight;
-    
-    private LiftHeight currentHeight;
-    
-    DigitalInput groundLimit;
-    
-    DigitalInput switchLimit;
-    
-    DigitalInput scaleLimit;
-    
-    DigitalInput topLimit;
-    
-    TalonSRX liftMotor;
-    
-    double motorSpeed;
-    
-    private void goTo (LiftHeight desiredHt) {
-        desiredHeight = desiredHt;
-    }
-    
-    public void goToGroundHeight() {
-        goTo(LiftHeight.GROUND);
-    }
     
     private DoubleSolenoid piston;
     private PistonState pistonState; 
@@ -89,13 +51,9 @@ public class Lift implements ILift{
         */
         if (currentCompletionRoutine != null) {
             throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
-
-    public static boolean moving() {
-        if (motorSpeed > 0) {
-            return true; 
-        } else {
-            return false;
         }
+
+        currentCompletionRoutine = completionRountime;
     }
 
     @Override
