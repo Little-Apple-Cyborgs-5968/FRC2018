@@ -6,69 +6,65 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class TeleoperatedMode implements IRobotMode {
     
-    private ILift lift;
+    private Lift lift;
     private IGrabber grabber;
     private IDrive drive;
     private Joystick leftJoystick;
     private Joystick rightJoystick;
     
-    private boolean lastGrabberButtonState = false;
-    
     private final double TOLERANCE = 0.1;
     
-    public TeleoperatedMode(IDrive drive, IGrabber grabber, ILift lift) {
+    public TeleoperatedMode(IDrive drive) {
         leftJoystick = new Joystick(PortMap.portOf(USB.LEFT));
         rightJoystick = new Joystick(PortMap.portOf(USB.RIGHT));
         
-        this.lift = lift;
-        this.grabber = grabber;
+        lift = new Lift(drive);
+        grabber = new Grabber();
         this.drive = drive;
     }
 
     @Override
     public void init() {
+       lift.goToCurrentHeight();
         drive.init();
     }
 
     @Override
     public void periodic() {
-        if (!getLeftButtonPressed(6)) {
-            drive.driveManual(getLeftStick(), getRightStick());
-        } else {
-            lift.setLiftSpeed(getLeftStick());
-        }
-        
-        boolean currentGrabberButtonState = getLeftButtonPressed(5);
-        if (currentGrabberButtonState && currentGrabberButtonState != lastGrabberButtonState) {
+        drive.driveManual(getLeftStick(), getRightStick());
+        if (getButtonPressed(1)){
             grabber.toggleGrabbing();
         }
-        lastGrabberButtonState = currentGrabberButtonState;
         
-        if (getRightButtonPressed(4)){
+        if (getButtonPressed(2) || getButtonPressed(5)){
             lift.goToGroundHeight();
         }
         
-        if (getRightButtonPressed(6)){
-            lift.goToScaleHeight();
+        if (getButtonPressed(3) || getButtonPressed(6)){
+            lift.goToSwitchHeight();
         }
+        
+        if (getButtonPressed(4) || getButtonPressed(7)){
+            lift.goToScaleHeight();
+        } 
     }
     
     private double getLeftStick() {
         double leftY = leftJoystick.getY();
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, 3);
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : leftY;
     }
     
     private double getRightStick() {
         double rightY = rightJoystick.getY();
-        return (Math.abs(rightY) < TOLERANCE) ? 0 : -Math.pow(rightY, 3);
+        return (Math.abs(rightY) < TOLERANCE) ? 0 : rightY;
     }
     
-    private boolean getLeftButtonPressed(int buttonNumber) {
-        return leftJoystick.getRawButton(buttonNumber);
-    }
-    
-    private boolean getRightButtonPressed(int buttonNumber) {
-        return rightJoystick.getRawButton(buttonNumber);
+    private boolean getButtonPressed(int buttonNumber) {
+        if (buttonNumber <= 4) {
+            return leftJoystick.getRawButton(buttonNumber);
+        } else {
+            return rightJoystick.getRawButton(buttonNumber);
+        }
     }
     
 }

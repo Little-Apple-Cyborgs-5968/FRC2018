@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5968.robot;
 
-import java.lang.Runnable;
-import java.lang.IllegalStateException;
 import java.util.function.Consumer;
 
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
@@ -24,55 +22,86 @@ public class Drive implements IDrive {
     
     private double leftMotorSpeed;
     private double rightMotorSpeed;
-    private double driveStraightSpeed;
+    
+    private final int PIDIDX = 0;
+    private final int TIMEOUT = 0;
+    private final int SENSORPOSITION = 0;
     
     private double distanceInches;
+    private double targetRotations;
     private double angleToRotate;
+    
+    private ControlMode controlMode;
     
     private DriveMode driveMode;
     
-    private static final double ROTATION_TOLERANCE = 5;
-
-    private static final double ENCODER_RESOLUTION = 2048.0;
-    private static final double WHEEL_DIAMETER = 6.0; // inches
-
-    private IEncoder leftEncoder;
-    private IEncoder rightEncoder;
-
-    private Runnable currentCompletionRoutine;
+    private final double ROTATION_TOLERANCE = 5;
     
     public Drive() {
-        //navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
+        navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
         rightMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_FOLLOWER));
         rightMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER_LEAD));
         leftMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_FOLLOWER));
         leftMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_LEAD));
-
-        leftEncoder = new TalonEncoder(leftMotorControllerLead);
-        rightEncoder = new TalonEncoder(rightMotorControllerLead);
-
-        double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / ENCODER_RESOLUTION;
-        leftEncoder.setDistancePerPulse(distancePerPulse);
-        rightEncoder.setDistancePerPulse(distancePerPulse);
-
-        leftEncoder.setInverted(true);
-        rightMotorControllerFollow.setInverted(true);
-        rightMotorControllerLead.setInverted(true);
+        
+        // Configure encoders on lead motors
+        leftMotorControllerLead.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, PIDIDX, TIMEOUT);
+        rightMotorControllerLead.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, PIDIDX, TIMEOUT);
 
         leftMotorControllerFollow.follow(leftMotorControllerLead);
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         
-        init();
+        controlMode = ControlMode.PercentOutput;
     }
 
     public void init() {
-        currentCompletionRoutine = null;
         distanceInches = 0;
+        targetRotations = 0;
         angleToRotate = 0;
-        stop();
-        leftEncoder.reset();
-        rightEncoder.reset();
+        driveMode = DriveMode.IDLEORMANUAL;
+        
+        // Reset encoders
+        leftMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
+        rightMotorControllerLead.setSelectedSensorPosition(SENSORPOSITION, PIDIDX, TIMEOUT);
+        
+        leftMotorSpeed = 0;
+        rightMotorSpeed = 0;
+        navX.resetYaw();
     }
+    
+
+    public void initAutoPID() {
+        leftMotorControllerLead.setSelectedSensorPosition(0, 0, 0);
+        rightMotorControllerLead.setSelectedSensorPosition(0, 0, 0);
+        
+
+        /* set the peak, nominal outputs, and deadband */
+        leftMotorControllerLead.configNominalOutputForward(0, 0);
+        leftMotorControllerLead.configNominalOutputReverse(0, 0);
+        leftMotorControllerLead.configPeakOutputForward(.5, 0);
+        leftMotorControllerLead.configPeakOutputReverse(-.5, 0);
+       
+        /* set closed loop gains in slot0 */
+        leftMotorControllerLead.config_kF(0, 0, 0);
+        leftMotorControllerLead.config_kP(0, 0.58, 0);
+        leftMotorControllerLead.config_kI(0, 0, 0);
+        leftMotorControllerLead.config_kD(0, 0.08, 0);
+        leftMotorControllerLead.config_IntegralZone(0, 100, 0);
+        
+        /* set the peak, nominal outputs, and deadband */
+        rightMotorControllerLead.configNominalOutputForward(0, 0);
+        rightMotorControllerLead.configNominalOutputReverse(0, 0);
+        rightMotorControllerLead.configPeakOutputForward(.5, 0);
+        rightMotorControllerLead.configPeakOutputReverse(-.5, 0);
+        rightMotorControllerLead.config_IntegralZone(0, 100, 0);
+       
+        /* set closed loop gains in slot0 */
+        rightMotorControllerLead.config_kF(0, 0, 0);
+        rightMotorControllerLead.config_kP(0, 0.56, 0);
+        rightMotorControllerLead.config_kI(0, 0, 0);
+        rightMotorControllerLead.config_kD(0, 0.51, 0);
+    }
+    
     
     @Override
     public DriveMode getCurrentDriveMode() {
@@ -81,159 +110,76 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double speed) {
-        driveDistance(distanceInches, speed, null);
+        driveMode = DriveMode.DRIVINGSTRAIGHT;
+        driveStraight(ControlMode.Position);
+        distanceInches = this.distanceInches;
+        targetRotations = (distanceInches / (Math.PI * 6.0)) * 2048;
+        
     }
 
     @Override
     public void rotateDegrees(double angle, double speed) {
-        rotateDegrees(angle, speed, null);
-    }
-
-    @Override
-    public void driveDistance(double distanceInches, double speed, Runnable completionRoutine) {
-        setCompletionRoutine(completionRoutine);
-        leftMotorSpeed = speed;
-        rightMotorSpeed = speed;
-        driveStraightSpeed = speed;
-        driveMode = DriveMode.DRIVINGSTRAIGHT;
-        this.distanceInches = distanceInches;
-        leftEncoder.reset();
-        rightEncoder.reset();
-    }
-
-    @Override
-    public void rotateDegrees(double relativeAngle, double speed, Runnable completionRoutine) {
-        setCompletionRoutine(completionRoutine);
-        driveMode = DriveMode.ROTATING;
+        controlMode = ControlMode.PercentOutput;
         navX.resetYaw();
+        driveMode = DriveMode.ROTATING;
         leftMotorSpeed = 0.2;
-        rightMotorSpeed = 0.2;
-        angleToRotate = relativeAngle;
+        rightMotorSpeed = -0.2;
+        angleToRotate = angle;
+        
     }
 
-
-    private void driveManualImplementation(double leftSpeed, double rightSpeed) {
-        driveMode = DriveMode.IDLEORMANUAL;
-        leftMotorSpeed = leftSpeed;
-        rightMotorSpeed = rightSpeed;
+    @Override
+    public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine) {
+        driveDistance(distanceInches, speed);
+        completionRoutine.accept(this);
     }
-    
+
+    @Override
+    public void rotateDegrees(double relativeAngle, double speed, Consumer<IDrive> completionRoutine) {
+        rotateDegrees(relativeAngle, speed);
+        completionRoutine.accept(this);
+    }
+
     @Override
     public void driveManual(double leftSpeed, double rightSpeed) {
-        setCompletionRoutine(null);
-        driveManualImplementation(leftSpeed, rightSpeed);
+        driveMode = DriveMode.IDLEORMANUAL;
+        leftMotorSpeed = leftSpeed;
+        rightMotorSpeed = -rightSpeed;
     }
 
-    private void stop() {
-        driveManualImplementation(0.0, 0.0);
-        driveStraightSpeed = 0.0;
+    private void driveStraight(ControlMode controlMode) {
+        controlMode = ControlMode.Position;
     }
     
-    private void setMotors(double leftMotorDirection, double rightMotorDirection) {
-        // Debug.logPeriodic("Left motor speed: " + leftMotorSpeed + ", direction: " + leftMotorDirection);
-        leftMotorControllerLead.set(ControlMode.PercentOutput, leftMotorSpeed * leftMotorDirection);
-        rightMotorControllerLead.set(ControlMode.PercentOutput, rightMotorSpeed * rightMotorDirection);
-    }
-
-    private void handleActionEnd() {
-        stop();
-        
-        if (currentCompletionRoutine != null) {
-            Runnable oldCompletionRoutine = currentCompletionRoutine;
-            currentCompletionRoutine = null;
-            oldCompletionRoutine.run();
-        }
-    }
-
-    private void setCompletionRoutine(Runnable completionRountime) {
-        // If there's already a completion routine, fail because that means an action was interrupted, and we don't allow that.
-        // Note that because we check this before seeing if a completion routine is being configured at all, we are saying that
-        // even goTo*Height() without a completion routine must not be called until an action is completed.
-        // The exception to this is if the action is explicitly aborted with abortCurrentAction.
-        /*
-        Other sensible things we could do here:
-        A) Replace the completion routine - we're essentially canceling the action. (This might be confusing though - maybe print a warning.)
-        B) Combine the completion routines:
-        Runnable oldCompletionRoutine = currentCompletionRoutine; // Note: This may seem pointless, but it's actually very important! (Ask me to explain some other time.)
-        Runnable combinedCompletionRoutine = () ->
-        {
-            oldCompletionRoutine.run();
-            completionRoutine.run();
-        };
-        currentCompletionRoutine = combinedCompletionRoutine;
-        */
-        if (currentCompletionRoutine != null) {
-            throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
-        }
-
-        currentCompletionRoutine = completionRountime;
-    }
-
-    private static final boolean enableSmartDriveStraight = false;
-    private static final double driveStraightBackPedalMultiplier = 0.5;
-    private static final double driveStraightTolerance = 0.25; // inches
-
-    // "Smart" drive straight logic
-    // Automatically adjusts motor speeds to try and keep encoders balanced within a tolerance.
-    // Only relatively smart, a nicer implementation would try to dynamically choose a value for driveStraightBackPedalMultiplier.
-    private void smartDriveStraightPeriodic() {
-        // negative when left is behind, positive when left is ahead
-        double encoderDifference = leftEncoder.getDistance() - rightEncoder.getDistance();
-
-        if (Math.abs(encoderDifference) < driveStraightTolerance) {
-            leftMotorSpeed = driveStraightSpeed;
-            rightMotorSpeed = driveStraightSpeed;
-        } else if (encoderDifference < 0.0) {
-            leftMotorSpeed = driveStraightSpeed;
-            rightMotorSpeed = driveStraightSpeed * driveStraightBackPedalMultiplier;
+    private void setMotors(int leftMotorDirection, int rightMotorDirection, DriveMode driveMode) {
+        if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
+            leftMotorControllerLead.set(controlMode, targetRotations * leftMotorDirection);
+            leftMotorControllerLead.set(controlMode, targetRotations * rightMotorDirection);
         } else {
-            leftMotorSpeed = driveStraightSpeed * driveStraightBackPedalMultiplier;
-            rightMotorSpeed = driveStraightSpeed;
+            leftMotorControllerLead.set(controlMode, leftMotorSpeed * leftMotorDirection);
+            leftMotorControllerLead.set(controlMode, rightMotorSpeed * rightMotorDirection);
         }
-
-        // Debug.logPeriodic("Smart drive: " + leftMotorSpeed + ", " + rightMotorSpeed + " (encoder difference: " + encoderDifference + ")");
     }
-    
+
     @Override
     public void periodic() {
-        //TODO: Remove me once we confirm encoders are correct.
-        // Debug.logPeriodic("Encoders: " + leftEncoder.getDistance() + ", " + rightEncoder.getDistance() + " inches");
-        // Debug.logPeriodic("Distance inches: " + distanceInches + ", drive mode: " + driveMode);
-        if (driveMode == DriveMode.IDLEORMANUAL) {
-            setMotors(1, 1);
-        } 
-        else if (driveMode == DriveMode.DRIVINGSTRAIGHT) {
-            // Process smart drive speed logic if enabled
-            if (enableSmartDriveStraight) {
-                smartDriveStraightPeriodic();
-            }
-            
-            // Set the speed of the motors
-            setMotors(1, 1);
-
-            // Check if we've completed our travel
-            double averageDistanceTraveled = (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
-            // Debug.logPeriodic("Avg distance: " + averageDistanceTraveled);
-            if (averageDistanceTraveled > distanceInches) {
-                handleActionEnd();
-            }
-        } 
-        else if (driveMode == DriveMode.ROTATING) {
-            double deltaAngle = navX.getYaw() - angleToRotate;
-
-            if (deltaAngle > 0.0) {
-                setMotors(1, -1);
-            } else {
-                setMotors(-1, 1);
-            }
-
-            // Check if we've finished rotating
-            if (Math.abs(deltaAngle) <= ROTATION_TOLERANCE) {
-                handleActionEnd();
-            }
+        if (getCurrentDriveMode() == DriveMode.IDLEORMANUAL) {
+            setMotors(1, 1, DriveMode.IDLEORMANUAL);
+        } else if (getCurrentDriveMode() == DriveMode.DRIVINGSTRAIGHT) {
+            navX.resetYaw();
+            setMotors(-1, 1, DriveMode.DRIVINGSTRAIGHT);
         }
-        else {
-            throw new IllegalStateException("Drive controller is in an invalid drive mode.");
+        else if (getCurrentDriveMode() == DriveMode.ROTATING) {
+            if (Math.abs(navX.getYaw() - angleToRotate) > ROTATION_TOLERANCE) {
+                if ((navX.getYaw() - angleToRotate) < 0) {
+                    setMotors(1, -1, DriveMode.ROTATING);
+                } else if ((navX.getYaw() - angleToRotate) > 0) {
+                    setMotors(-1, 1, DriveMode.ROTATING);
+                }
+            } else {
+                setMotors(0, 0, DriveMode.IDLEORMANUAL);
+            }
         }
     }
+    
 }

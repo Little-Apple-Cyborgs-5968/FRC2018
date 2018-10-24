@@ -1,28 +1,36 @@
 package org.usfirst.frc.team5968.robot;
 
-
-import java.lang.Runnable;
+<<<<<<< HEAD
+import java.util.function.Consumer;
 
 public interface ILift {
     
+=======
 public interface ILift {
     
-
+   
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
     /*
      * The following three methods call liftDistance to raise/lower to the
      * correct value
      */
     public void goToGroundHeight();
-  
+<<<<<<< HEAD
+=======
+    
+>>>>>>> dbf063a37b8d18e22be1d013e8945e43c570c46f
     public void goToSwitchHeight();
-
+    public void goToScaleHeight();
+    public void goToSwitchHeight(Consumer<IDrive> completionRoutine);
+    public void goToScaleHeight(Consumer<IDrive> completionRoutine);
+    public void goToGroundHeight(Consumer<IDrive> completionRoutine);
+    
     /*
-     * (Re)-initializes this lift.
-     * Aborts any curently-in-progress actions. This should be done when switching modes so that
-     * actions from a previous mode do not affect the next one.
+     * Moves the scissor lift to the correct height
      */
-    public void init();
+    public void goToCurrentHeight();
 
+       
     /*
      * Called periodically to execute the actions set by the above methods
      */

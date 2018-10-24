@@ -1,6 +1,5 @@
 package org.usfirst.frc.team5968.robot;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -15,26 +14,21 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IGrabber grabber;
     private ILift lift;
-    private IFieldInformation fieldInformation;
-    
-    private IDashboard dashboard;
     
     public Robot() {
         drive = new Drive();
         grabber = new Grabber();
-        lift = new Lift();
-        dashboard = new HardCodedDashboard();
-        fieldInformation = new FieldInformation();
+        lift = new Lift(drive);
         
-        disabledMode = new DisabledMode(grabber, fieldInformation);
-        autonomousMode = new AutonomousMode(drive, grabber, lift, fieldInformation, dashboard);
-        teleoperatedMode = new TeleoperatedMode(drive, grabber, lift);
-        //TODO: CameraServer.getInstance().startAutomaticCapture();
+        disabledMode = new DisabledMode();
+        autonomousMode = new AutonomousMode(drive);
+        teleoperatedMode = new TeleoperatedMode(drive);
     }
     
     @Override
     public void startCompetition() {
         HAL.observeUserProgramStarting();
+        LiveWindow.setEnabled(isTest());
         
         IRobotMode currentMode = null;
         IRobotMode desiredMode = null;
@@ -43,8 +37,6 @@ public class Robot extends RobotBase {
             desiredMode = getDesiredMode();
         
             if (desiredMode != currentMode) {
-                LiveWindow.setEnabled(isTest());
-                doPeripheralReinitialization();
             	desiredMode.init();
             	currentMode = desiredMode;
             }
@@ -55,15 +47,10 @@ public class Robot extends RobotBase {
         }
     }
     
-    private void doPeripheralReinitialization() {
-        drive.init();
-        lift.init();
-    }
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         grabber.periodic();
         lift.periodic();
-        Debug.periodic();
     }
     
     private IRobotMode getDesiredMode() {

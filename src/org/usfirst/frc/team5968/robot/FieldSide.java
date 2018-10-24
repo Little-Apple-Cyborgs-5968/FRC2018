@@ -1,8 +1,7 @@
 package org.usfirst.frc.team5968.robot;
 
-public enum FieldPosition {
+public enum FieldSide {
     LEFT, 
     RIGHT, 
-    CENTER, 
-    INVALID
+    CENTER
 }
