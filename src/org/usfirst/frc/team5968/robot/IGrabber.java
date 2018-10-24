@@ -2,6 +2,7 @@ package org.usfirst.frc.team5968.robot;
 
 public interface IGrabber {
     
+    public void toggleGrabbing();
     public void grab();
     public void release();
     
@@ -9,6 +10,5 @@ public interface IGrabber {
      * Called periodically to execute the actions stated above
      */
     public void periodic();
-    void setSpeed(double speed);
     
 }

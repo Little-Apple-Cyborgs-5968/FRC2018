@@ -23,6 +23,5 @@
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Kauai Labs/navX-MXP/navXUI/lib/toxiclibs_p5.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Kauai Labs/navX-MXP/navXUI/lib/toxiclibscore.jar"/>
 	<classpathentry kind="var" path="navx-mxp"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

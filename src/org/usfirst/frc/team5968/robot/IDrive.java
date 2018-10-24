@@ -19,15 +19,19 @@ public interface IDrive {
     /*
      * completionRoutine is called when the current action has been completed
      */
-    public void driveDistance(double speed, double distanceInches, Runnable completionRoutine);
+    public void driveDistance(double speed, double distanceInches, Consumer<IDrive> completionRoutine);
 
-    public void rotateDegrees(double relativeAngle, double speed, Runnable completionRoutine);
+    public void rotateDegrees(double relativeAngle, double speed, Consumer<IDrive> completionRoutine);
 
     /*
      * This is the method used to drive manually during teleoperated mode
      */
     public void driveManual(double leftSpeed, double rightSpeed);
     
+    /*
+     * Sets PID gain values, peak output, nominal output
+     */
+    public void initAutoPID();
 
     public void init();
     
