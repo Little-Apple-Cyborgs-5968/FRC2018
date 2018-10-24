@@ -5,11 +5,11 @@ import org.usfirst.frc.team5968.robot.PortMap.CAN;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+
 public class Grabber implements IGrabber {
     
     private TalonSRX rightMotor;
     private TalonSRX leftMotor;
-
     
     private double grabberSpeed = 0.9;
 
@@ -43,12 +43,12 @@ public class Grabber implements IGrabber {
     public void release() {
         moveDirection = moveOut;
     }
-    
+
+ 
     
     @Override
     public void periodic() {
         leftMotor.set(ControlMode.PercentOutput, -moveDirection * grabberSpeed);
         rightMotor.set(ControlMode.PercentOutput, moveDirection * grabberSpeed);
     }
-    
 }
