@@ -10,9 +10,6 @@ public class Grabber implements IGrabber {
     
     private TalonSRX rightMotor;
     private TalonSRX leftMotor;
-
-public class Grabber implements IGrabber{
-
     
     private double grabberSpeed = 0.9;
 
@@ -21,9 +18,8 @@ public class Grabber implements IGrabber{
     private static final double moveOut = -1.0; 
     
     public Grabber (){
-
-        rightMotor = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER));
-        leftMotor = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER));
+        rightMotor = new TalonSRX(PortMap.portOf(CAN.GRABBER_RIGHT_MOTOR_CONTROLLER));
+        leftMotor = new TalonSRX(PortMap.portOf(CAN.GRABBER_LEFT_MOTOR_CONTROLLER));
 
         init();
     }
