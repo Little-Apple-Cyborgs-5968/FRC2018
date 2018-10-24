@@ -77,7 +77,7 @@ public class ScaleAuto implements IRobotMode {
      * FIFTH STEP: open the grabber
      */ 
     public void openGrabber() {
-        grabber.release();
+        grabber.shoot();
     }
     
 }

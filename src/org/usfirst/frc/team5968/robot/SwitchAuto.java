@@ -82,7 +82,7 @@ public class SwitchAuto implements IRobotMode {
      */ 
     public void openGrabber() {
         Debug.log("Open grabber");
-        grabber.release();
+        grabber.shoot();
     }
 
 }

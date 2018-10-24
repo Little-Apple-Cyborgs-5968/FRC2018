@@ -10,7 +10,7 @@ import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 public class Lift implements ILift {
     
-    private DoubleSolenoid piston;
+    private DoubleSolenoid liftPiston;
     private PistonState pistonState; 
     private Compressor compressor;
     
@@ -19,7 +19,7 @@ public class Lift implements ILift {
     public Lift() {
         compressor = new Compressor(PortMap.portOf(CAN.PCM));
         compressor.setClosedLoopControl(true);
-        piston = new DoubleSolenoid(3, 2); // add channels later
+        liftPiston = new DoubleSolenoid(3, 2); // add channels later
         pistonState = PistonState.OPEN;
         
         init();
@@ -83,9 +83,9 @@ public class Lift implements ILift {
     public void periodic() {
         // Stop moving if we've hit the limit switch in the direction we want to go
         if (pistonState == PistonState.OPEN) {
-            piston.set(DoubleSolenoid.Value.kReverse);
+            liftPiston.set(DoubleSolenoid.Value.kReverse);
         } else{
-            piston.set(DoubleSolenoid.Value.kForward);
+            liftPiston.set(DoubleSolenoid.Value.kForward);
         }
     }
 }
