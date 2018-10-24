@@ -5,11 +5,15 @@ import org.usfirst.frc.team5968.robot.PortMap.CAN;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Grabber implements IGrabber {
     
     private TalonSRX rightMotor;
     private TalonSRX leftMotor;
+    private DoubleSolenoid grabberPiston;
+    private PistonState pistonState;
+
     
     private double grabberSpeed = 0.9;
 
@@ -20,6 +24,9 @@ public class Grabber implements IGrabber {
     public Grabber (){
         rightMotor = new TalonSRX(PortMap.portOf(CAN.GRABBER_RIGHT_MOTOR_CONTROLLER));
         leftMotor = new TalonSRX(PortMap.portOf(CAN.GRABBER_LEFT_MOTOR_CONTROLLER));
+        
+        grabberPiston = new DoubleSolenoid(4, 5); // add channels later
+        pistonState = PistonState.OPEN;
 
         init();
     }
@@ -40,11 +47,14 @@ public class Grabber implements IGrabber {
     }
 
     @Override
-    public void release() {
+    public void shoot() {
         moveDirection = moveOut;
     }
-
- 
+    
+    @Override
+    public void deploy(){
+        grabberPiston.set(DoubleSolenoid.Value.kForward);
+    }
     
     @Override
     public void periodic() {

@@ -70,6 +70,7 @@ public class AutonomousMode implements IRobotMode {
         autonomousSubMode = getAutoModeImplementation();
         Debug.log(autonomousSubMode.getClass().getName() + " mode is starting");
         autonomousSubMode.init();
+        grabber.deploy();
     }
 
     @Override
