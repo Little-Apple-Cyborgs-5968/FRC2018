@@ -28,16 +28,6 @@ public class Lift implements ILift{
     
     private LiftHeight currentHeight;
     
-    DigitalInput groundLimit;
-    
-    DigitalInput switchLimit;
-    
-    DigitalInput scaleLimit;
-    
-    DigitalInput topLimit;
-    
-    TalonSRX liftMotor;
-    
     double motorSpeed;
     
     private void goTo (LiftHeight desiredHt) {
