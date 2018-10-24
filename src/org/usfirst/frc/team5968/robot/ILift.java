@@ -1,17 +1,20 @@
 package org.usfirst.frc.team5968.robot;
 
+
 import java.lang.Runnable;
 
 public interface ILift {
     
+public interface ILift {
+    
+
     /*
      * The following three methods call liftDistance to raise/lower to the
      * correct value
      */
     public void goToGroundHeight();
-    public void goToScaleHeight();
-    public void goToGroundHeight(Runnable completionRoutine);
-    public void goToScaleHeight(Runnable completionRoutine);
+  
+    public void goToSwitchHeight();
 
     /*
      * (Re)-initializes this lift.
