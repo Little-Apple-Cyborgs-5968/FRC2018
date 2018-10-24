@@ -12,7 +12,8 @@ public class PortMap {
         LEFT_MOTOR_CONTROLLER_FOLLOWER,
         RIGHT_MOTOR_CONTROLLER_LEAD,
         RIGHT_MOTOR_CONTROLLER_FOLLOWER,
-        LIFT_MOTOR_CONTROLLER,
+        LEFT_MOTOR_CONTROLLER,
+        RIGHT_MOTOR_CONTROLLER,
         PCM
     }
     
@@ -37,8 +38,10 @@ public class PortMap {
             return 4;
         case RIGHT_MOTOR_CONTROLLER_FOLLOWER:
             return 5;
-        case LIFT_MOTOR_CONTROLLER: 
+        case LEFT_MOTOR_CONTROLLER: 
             return 1;
+        case RIGHT_MOTOR_CONTROLLER: 
+            return 6;
         case PCM:
             return 0;
         default:

@@ -2,50 +2,53 @@ package org.usfirst.frc.team5968.robot;
 
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Grabber implements IGrabber {
-
-    private DoubleSolenoid piston;
-    private PistonState pistonState; 
-    private Compressor compressor;
     
+    private TalonSRX rightMotor;
+    private TalonSRX leftMotor;
+
+    
+    private double grabberSpeed = 0.9;
+
+    private double moveDirection = 0.0;
+    private static final double moveIn = 1.0;
+    private static final double moveOut = -1.0; 
     
     public Grabber (){
-        compressor = new Compressor(PortMap.portOf(CAN.PCM));
-        compressor.setClosedLoopControl(true);
-        piston = new DoubleSolenoid(3, 2); // add channels later
-        pistonState = PistonState.OPEN;
+        rightMotor = new TalonSRX(PortMap.portOf(CAN.RIGHT_MOTOR_CONTROLLER));
+        leftMotor = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER));
+
+        init();
+    }
+    
+    public void init() {
+        // Abort the current action
+        moveDirection = 0.0;
     }
     
     @Override
-    public void grab() {      
-        pistonState = PistonState.OPEN;
+    public void setSpeed(double speed) {
+        grabberSpeed = Math.abs(speed); 
+        }
+
+    @Override
+    public void grab() {   
+        moveDirection = moveIn;
     }
 
     @Override
     public void release() {
-        pistonState = PistonState.CLOSED;
-    }
-
-    @Override
-    public void toggleGrabbing() {
-        if (pistonState == PistonState.OPEN) {
-            release();
-        } else {
-            grab();
-        }
+        moveDirection = moveOut;
     }
     
     
     @Override
     public void periodic() {
-        if (pistonState == PistonState.OPEN) {
-            piston.set(DoubleSolenoid.Value.kReverse);
-        } else{
-            piston.set(DoubleSolenoid.Value.kForward);
-        }
+        leftMotor.set(ControlMode.PercentOutput, -moveDirection * grabberSpeed);
+        rightMotor.set(ControlMode.PercentOutput, moveDirection * grabberSpeed);
     }
     
 }
