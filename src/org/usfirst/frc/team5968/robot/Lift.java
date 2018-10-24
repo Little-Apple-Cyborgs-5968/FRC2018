@@ -9,10 +9,6 @@ import java.lang.IllegalStateException;
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 
 public class Lift implements ILift {
-
-    private LiftHeight desiredHeight;
-    private LiftHeight currentHeight;
-    
     
     private DoubleSolenoid piston;
     private PistonState pistonState; 
